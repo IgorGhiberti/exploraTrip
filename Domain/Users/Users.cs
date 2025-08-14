@@ -6,11 +6,12 @@ namespace Domain.User
 
     public class User : BaseEntity
     {
-        public User(Guid id, Email email, string userName)
+        public User(Guid id, Email email, string userName, bool active)
         {
             Id = id;
             Email = email;
             UserName = userName;
+            Active = active;
         }
         public User()
         {
@@ -19,6 +20,6 @@ namespace Domain.User
         public Guid Id { get; private set; }
         public Email? Email { get; private set; }
         public string UserName { get; private set; } = string.Empty;
-        public bool Active { get; private set; } = true;
+        public bool Active { get; private set; }
     }
 }

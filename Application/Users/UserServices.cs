@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Application.Users.DTOs;
 using Domain.Common;
 using Domain.User;
 using Domain.ValueObjects;
@@ -15,20 +16,38 @@ public class UserServices
         _unitOfWork = unitOfWork;
     }
 
+    private Email CreateEmailUser(string emailUserVal)
+    {
+        if (Email.Create(emailUserVal) is not Email email)
+        {
+            throw new ArgumentException("Email inválido");
+        }
+        return email;
+    }
     public async Task<List<User>> GetAll()
     {
         return await _userRepository.GetAll();
     }
 
-    public async Task AddUser(CreateUserDTO userDto)
+    public async Task GetUserById(Guid id)
     {
-        if (Email.Create(userDto.Email) is not Email email)
-        {
-            throw new ArgumentException("Email inválido");
-        }
+        await _userRepository.GetUserById(id);
+    }
 
-        User newUser = new User(new Guid(), email, userDto.Name);
+    public async Task ActiveUser()
+    {
+        
+    }
+
+    public async Task AddUser(CreateUserDTO userDto, CancellationToken cancellationToken)
+    {
+        User newUser = new User(new Guid(), CreateEmailUser(userDto.Email), userDto.Name, true);
         _userRepository.AddUser(newUser);
-        await _unitOfWork.SaveChangesAsync();
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task UpdateUser(UpdateUserDTO userDto, CancellationToken cancellationToken)
+    {
+
     }
 }

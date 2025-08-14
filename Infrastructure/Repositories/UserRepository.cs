@@ -11,7 +11,9 @@ namespace Infrastructure.Repositories
         public List<User> users = new();
         public void ActiveUser(Guid id)
         {
-            throw new NotImplementedException();
+            var user = users.SingleOrDefault(u => u.Id == id);
+            int index = users.IndexOf(user);
+            users[index] = new User(user.Id, user.Email, user.UserName, true);
         }
 
         public void AddUser(User user)
@@ -21,27 +23,36 @@ namespace Infrastructure.Repositories
 
         public void DisableUser(Guid id)
         {
-            throw new NotImplementedException();
+            var user = users.SingleOrDefault(u => u.Id == id);
+            int index = users.IndexOf(user);
+            users[index] = new User(user.Id, user.Email, user.UserName, false);
         }
 
-        public Task<List<User>> GetAll()
+        public async Task<List<User>> GetAll()
         {
-            throw new NotImplementedException();
+            return await Task.FromResult(users);
         }
 
-        public Task<User> GetUserById(Guid id)
+        public async Task<User> GetUserById(Guid id)
         {
-            throw new NotImplementedException();
+            var user = users.SingleOrDefault(u => u.Id == id);
+            if (user == null)
+            {
+                throw new Exception("Usuário não existe");
+            }
+            return await Task.FromResult(user);
         }
 
-        public Task<bool> IsUserActive(Guid id)
+        public async Task<bool> IsUserActive(Guid id)
         {
-            throw new NotImplementedException();
+            var user = await GetUserById(id);
+            return user.Active;
         }
 
         public void UpdateUser(User user)
         {
-            throw new NotImplementedException();
+            int index = users.IndexOf(user);
+            users[index] = user;
         }
     }
 }

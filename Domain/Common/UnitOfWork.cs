@@ -7,6 +7,7 @@ namespace Infrastructure.Repositories
     {
         public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
+            //TODO Implementar lógica para salvar no banco de dados
             await Task.CompletedTask;
             return 0;
         }

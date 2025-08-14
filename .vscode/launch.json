@@ -1,0 +1,15 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch WebApi",
+      "type": "coreclr",
+      "request": "launch",
+      "program": "${workspaceFolder}/WebApi/bin/Debug/net8.0/WebApi.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/WebApi",
+      "stopAtEntry": false,
+      "console": "internalConsole"
+    }
+  ]
+}
