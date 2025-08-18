@@ -10,6 +10,10 @@ namespace Infrastructure.Repositories
     internal class UserRepository : IUserRepository
     {
         private readonly ApplicationDBContext _context;
+        public UserRepository(ApplicationDBContext context)
+        {
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+        } 
         public async Task ActiveUser(Guid id)
         {
             var user = await GetUserById(id);
@@ -20,7 +24,7 @@ namespace Infrastructure.Repositories
 
         public async Task AddUser(User user)
         {
-            _context.Add(user);
+            _context.Add(user);            
             await _context.SaveChangesAsync();
         }
 

@@ -22,7 +22,7 @@ namespace WebApi.Controllers
             _userServices = userServices;
         }
 
-        [HttpPost]
+        [HttpGet]
         public async Task<IActionResult> GetAllUsers()
         {
             List<ShowUserDTO> users = await _userServices.GetAll();
