@@ -9,11 +9,9 @@ namespace Application.Users;
 internal class UserServices : IUserServices
 {
     private readonly IUserRepository _userRepository;
-    private readonly IUnitOfWork _unitOfWork;
-    public UserServices(IUserRepository userRepository, IUnitOfWork unitOfWork)
+    public UserServices(IUserRepository userRepository)
     {
         _userRepository = userRepository;
-        _unitOfWork = unitOfWork;
     }
 
     public async Task<List<ShowUserDTO>> GetAll()

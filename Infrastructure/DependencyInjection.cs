@@ -11,7 +11,6 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddDbContext<ApplicationDBContext>(options => options.UseNpgsql(configuration.GetConnectionString("Default")));
         return services;
