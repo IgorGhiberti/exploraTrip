@@ -6,7 +6,7 @@ using Domain.ValueObjects;
 
 namespace Application.Users;
 
-public class UserServices
+internal class UserServices : IUserServices
 {
     private readonly IUserRepository _userRepository;
     private readonly IUnitOfWork _unitOfWork;
@@ -16,38 +16,41 @@ public class UserServices
         _unitOfWork = unitOfWork;
     }
 
-    private Email CreateEmailUser(string emailUserVal)
+    public async Task<List<ShowUserDTO>> GetAll()
     {
-        if (Email.Create(emailUserVal) is not Email email)
-        {
-            throw new ArgumentException("Email inválido");
-        }
-        return email;
-    }
-    public async Task<List<User>> GetAll()
-    {
-        return await _userRepository.GetAll();
+        List<User> users = await _userRepository.GetAll();
+        var result = from u in users
+                     select new ShowUserDTO(u.UserName, u.Email!.Value, u.Active);
+        return result.ToList();
     }
 
-    public async Task GetUserById(Guid id)
+    public async Task<ShowUserDTO> GetUserById(Guid id)
     {
-        await _userRepository.GetUserById(id);
+        User user = await _userRepository.GetUserById(id);
+        return new ShowUserDTO(user.UserName, user.Email!.Value, user.Active);
     }
 
-    public async Task ActiveUser()
+    public async Task ActiveUser(Guid id)
     {
-        
+        await _userRepository.ActiveUser(id);
     }
-
+    public async Task DisableUser(Guid id)
+    {
+        await _userRepository.DisableUser(id);
+    }
+    public async Task<bool> IsUserActive(Guid id)
+    {
+        return await _userRepository.IsUserActive(id);
+    }
     public async Task AddUser(CreateUserDTO userDto, CancellationToken cancellationToken)
     {
-        User newUser = new User(new Guid(), CreateEmailUser(userDto.Email), userDto.Name, true);
-        _userRepository.AddUser(newUser);
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        User newUser = new User(userDto.EmailVal, userDto.Name, userDto.Password);
+        await _userRepository.AddUser(newUser);
     }
 
     public async Task UpdateUser(UpdateUserDTO userDto, CancellationToken cancellationToken)
     {
-
+        User newUser = new User(userDto.EmailVal, userDto.Name, userDto.Password);
+        await _userRepository.UpdateUser(newUser);
     }
 }

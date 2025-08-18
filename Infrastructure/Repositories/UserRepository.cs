@@ -3,44 +3,48 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Domain.User;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
-    public class UserRepository : IUserRepository
+    internal class UserRepository : IUserRepository
     {
-        public List<User> users = new();
-        public void ActiveUser(Guid id)
+        private readonly ApplicationDBContext _context;
+        public async Task ActiveUser(Guid id)
         {
-            var user = users.SingleOrDefault(u => u.Id == id);
-            int index = users.IndexOf(user);
-            users[index] = new User(user.Id, user.Email, user.UserName, true);
+            var user = await GetUserById(id);
+            user.ActivateUser();
+            _context.Update(user);
+            await _context.SaveChangesAsync();
         }
 
-        public void AddUser(User user)
+        public async Task AddUser(User user)
         {
-            users.Add(user);
+            _context.Add(user);
+            await _context.SaveChangesAsync();
         }
 
-        public void DisableUser(Guid id)
+        public async Task DisableUser(Guid id)
         {
-            var user = users.SingleOrDefault(u => u.Id == id);
-            int index = users.IndexOf(user);
-            users[index] = new User(user.Id, user.Email, user.UserName, false);
+            var user = await GetUserById(id);
+            user.DesactiveUser();
+            _context.Update(user);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<List<User>> GetAll()
         {
-            return await Task.FromResult(users);
+            return await _context.Users.ToListAsync();
         }
 
         public async Task<User> GetUserById(Guid id)
         {
-            var user = users.SingleOrDefault(u => u.Id == id);
+            var user = await _context.Users.SingleOrDefaultAsync(u => u.Id == id);
             if (user == null)
             {
                 throw new Exception("Usuário não existe");
             }
-            return await Task.FromResult(user);
+            return user;
         }
 
         public async Task<bool> IsUserActive(Guid id)
@@ -49,10 +53,10 @@ namespace Infrastructure.Repositories
             return user.Active;
         }
 
-        public void UpdateUser(User user)
+        public async Task UpdateUser(User user)
         {
-            int index = users.IndexOf(user);
-            users[index] = user;
+            _context.Update(user);
+            await _context.SaveChangesAsync();
         }
     }
 }

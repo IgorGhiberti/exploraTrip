@@ -1,13 +1,2 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Application.Users.DTOs
-{
-    public class UpdateUserDTO
-    {
-        public string Name { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-    }
-}
+namespace Application.Users.DTOs;
+public record UpdateUserDTO(string Name, string EmailVal, string Password);

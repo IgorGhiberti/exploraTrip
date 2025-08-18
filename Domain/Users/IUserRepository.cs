@@ -4,10 +4,10 @@ namespace Domain.User
     {
         Task<List<User>> GetAll();
         Task<User> GetUserById(Guid id);
-        void AddUser(User user);
-        void UpdateUser(User user);
-        void DisableUser(Guid id);
+        Task AddUser(User user);
+        Task UpdateUser(User user);
+        Task DisableUser(Guid id);
         Task<bool> IsUserActive(Guid id);
-        void ActiveUser(Guid id);
+        Task ActiveUser(Guid id);
     }
 }

@@ -1,13 +1,15 @@
+using Application;
 using Application.Users;
 using Domain.Common;
 using Domain.User;
+using Infrastructure;
 using Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
-    
-builder.Services.AddScoped<UserServices>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+//TODO dependecy injection através de IServiceCollection pra cada classlib
+builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddApplication();
 builder.Services.AddControllers();
 
 var app = builder.Build();
