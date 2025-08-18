@@ -42,19 +42,22 @@ namespace WebApi.Controllers
             return Ok();
         }
 
+        [HttpPost("authenticate")]
+        public async Task<IActionResult> LoginUser(LoginUserDTO userDto, CancellationToken cancellationToken)
+        {
+            string storedHash = await _userServices.GetLoginInfo(userDto.Id);
+            bool isCorrectPassword = Cryptography.ValidateHash(userDto.Password, storedHash, userDto.Email);
+            return isCorrectPassword ? Ok("Autenticado.") : BadRequest("Senha errada");
+        }
+
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser(Guid id, UpdateUserDTO userDto, CancellationToken cancellationToken)
         {
-            var user = await _userServices.GetUserById(id);
-            if (user == null)
-            {
-                return NotFound("Usuário não encontrado.");
-            }
-            await _userServices.UpdateUser(userDto, cancellationToken);
+            await _userServices.UpdateUser(id, userDto, cancellationToken);
             return Ok();
         }
 
-        [HttpGet("getById/{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetUserById(Guid id)
         {
             var user = await _userServices.GetUserById(id);

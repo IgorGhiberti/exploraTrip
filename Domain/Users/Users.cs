@@ -21,6 +21,21 @@ public class User : BaseEntity
     {
         Active = false;
     }
+    public void UpdateUser(string? email, string? userName, string? hashPassword)
+    {
+        if (!string.IsNullOrEmpty(email))
+        {
+            Email = Email.Create(email);
+        }
+        if (!string.IsNullOrEmpty(userName))
+        {
+            UserName = userName;
+        }
+        if (!string.IsNullOrEmpty(hashPassword))
+        {
+            HashPassword = hashPassword;
+        }
+    }
     //Pro entity
     private User() { }
     public Guid Id { get; init; }

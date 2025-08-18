@@ -13,9 +13,10 @@ namespace Infrastructure.Repositories
         public UserRepository(ApplicationDBContext context)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
-        } 
+        }
         public async Task ActiveUser(Guid id)
         {
+            //TODO: pegar usuário por ID e ativá-lo deve ser feito no service.
             var user = await GetUserById(id);
             user.ActivateUser();
             _context.Update(user);
@@ -24,12 +25,13 @@ namespace Infrastructure.Repositories
 
         public async Task AddUser(User user)
         {
-            _context.Add(user);            
+            _context.Add(user);
             await _context.SaveChangesAsync();
         }
 
         public async Task DisableUser(Guid id)
         {
+            //TODO: pegar usuário por ID e ativá-lo deve ser feito no service.
             var user = await GetUserById(id);
             user.DesactiveUser();
             _context.Update(user);
@@ -43,6 +45,8 @@ namespace Infrastructure.Repositories
 
         public async Task<User> GetUserById(Guid id)
         {
+            //Se o usuário não existir, retornar null. E quem trata isso deve ser
+            //o services
             var user = await _context.Users.SingleOrDefaultAsync(u => u.Id == id);
             if (user == null)
             {

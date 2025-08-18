@@ -10,9 +10,8 @@ public static class Cryptography
         string hashedPass = _passwordHasher.HashPassword(email, password);
         return hashedPass;
     }
-    public static bool ValidateHash(string password, string email)
+    public static bool ValidateHash(string password, string storedHash, string email)
     {
-        var hashedPassword = CreateHash(password, email);
-        return _passwordHasher.VerifyHashedPassword(email, hashedPassword, password) == PasswordVerificationResult.Success;
+        return _passwordHasher.VerifyHashedPassword(email, storedHash, password) == PasswordVerificationResult.Success;
     }
 }

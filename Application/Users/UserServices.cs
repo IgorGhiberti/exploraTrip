@@ -21,6 +21,11 @@ internal class UserServices : IUserServices
                      select new ShowUserDTO(u.UserName, u.Email!.Value, u.Active);
         return result.ToList();
     }
+    public async Task<string> GetLoginInfo(Guid id)
+    {
+        var user = await _userRepository.GetUserById(id);
+        return user.HashPassword;
+    }
 
     public async Task<ShowUserDTO> GetUserById(Guid id)
     {
@@ -46,9 +51,14 @@ internal class UserServices : IUserServices
         await _userRepository.AddUser(newUser);
     }
 
-    public async Task UpdateUser(UpdateUserDTO userDto, CancellationToken cancellationToken)
+    public async Task UpdateUser(Guid id, UpdateUserDTO userDto, CancellationToken cancellationToken)
     {
-        User newUser = new User(userDto.EmailVal, userDto.Name, userDto.Password);
-        await _userRepository.UpdateUser(newUser);
+        var user = await _userRepository.GetUserById(id);
+        if (user == null)
+        {
+            throw new Exception("Usuário não existe, não é possível atualizar.");
+        }
+        user.UpdateUser(userDto.EmailVal, userDto.Name, userDto.Password);
+        await _userRepository.UpdateUser(user);
     }
 }
