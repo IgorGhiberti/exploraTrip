@@ -26,8 +26,8 @@ public class UserConfiguration : BaseEntityConfiguration<User>
             .IsRequired()
             .HasMaxLength(255)
             .HasConversion(
-            email => email.Value,
-            value => Email.Create(value)!);
+            email => email!.Value,
+            value => Email.Create(value).Data!);
 
         builder.HasIndex(u => u.Email).IsUnique();
 

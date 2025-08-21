@@ -8,7 +8,7 @@ public class User : BaseEntity
     public User(string email, string userName, string hashPassword, bool active = true)
     {
         Id = Guid.NewGuid();
-        Email = Email.Create(email);
+        Email = Email.Create(email).Data;
         UserName = userName;
         HashPassword = hashPassword;
         Active = active;
@@ -17,7 +17,7 @@ public class User : BaseEntity
     {
         Active = true;
     }
-    public void DesactiveUser()
+    public void DisableUser()
     {
         Active = false;
     }
@@ -25,7 +25,7 @@ public class User : BaseEntity
     {
         if (!string.IsNullOrEmpty(email))
         {
-            Email = Email.Create(email);
+            Email = Email.Create(email).Data;
         }
         if (!string.IsNullOrEmpty(userName))
         {

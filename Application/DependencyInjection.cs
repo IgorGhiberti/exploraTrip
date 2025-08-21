@@ -1,3 +1,4 @@
+using Application.Interfaces;
 using Application.Users;
 using Microsoft.Extensions.DependencyInjection;
 

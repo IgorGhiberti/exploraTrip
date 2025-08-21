@@ -1,19 +1,22 @@
 using Application;
-using Application.Users;
-using Domain.Common;
-using Domain.User;
+using Application.Interfaces;
 using Infrastructure;
-using Infrastructure.Repositories;
 using WebApi.Extensions;
+using WebApi.GlobalExceptions;
+using WebApi.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//TODO dependecy injection através de IServiceCollection pra cada classlib
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
 builder.Services.AddControllers();
+builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<GlobalExceptionsHandler>();
+builder.Services.AddScoped<IPasswordCryptography, Cryptography>();
 
 var app = builder.Build();
+
+app.UseExceptionHandler(); 
 
 app.ApplyMigrations();
 
