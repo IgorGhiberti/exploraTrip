@@ -7,10 +7,7 @@ namespace Tests.Entities
     public sealed class UserTests
     {
         private readonly Faker _faker = new("pt_BR");
-        public UserTests(Faker faker)
-        {
-            _faker = faker;
-        }
+
         [Fact]
         public void Constructor_GivenAllParameters_ThenShouldSetThePropertiesCorrectly()
         {
@@ -50,6 +47,26 @@ namespace Tests.Entities
             if (!string.IsNullOrWhiteSpace(expectedHashPassword))
                 Assert.Equal(expectedHashPassword, user.HashPassword);
             Assert.Equal(user.HashPassword, user.HashPassword);
+        }
+
+        [Fact]
+        public void ActiveUserMethod_GivenAnyUserActiveParameter_ThenShouldSetActiveEqualsTrue()
+        {
+            var user = new User("igorgh@gmail.com", "Igor", "12345", _faker.Random.Bool());
+
+            user.ActivateUser();
+
+            Assert.True(user.Active);
+        }
+
+        [Fact]
+        public void DisableUserMethod_GivenAnyUserActiveParameter_ThenShouldSetActiveEqualsFalse()
+        {
+            var user = new User("igorgh@gmail.com", "Igor", "12345", _faker.Random.Bool());
+
+            user.DisableUser();
+
+            Assert.False(user.Active);
         }
     }
 }

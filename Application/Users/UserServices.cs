@@ -77,6 +77,7 @@ internal class UserServices : IUserServices
     }
     public async Task<ResultData<CreateUserDTO>> AddUser(CreateUserDTO userDto, CancellationToken cancellationToken)
     {
+        //TODO garantir que o e-mail não existe no banco ainda
         var emailResult = Email.Create(userDto.EmailVal);
         if (!emailResult.IsSuccess)
         {
