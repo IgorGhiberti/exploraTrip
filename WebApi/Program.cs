@@ -14,9 +14,24 @@ builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<GlobalExceptionsHandler>();
 builder.Services.AddScoped<IPasswordCryptography, Cryptography>();
 
+// Configuração de CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173", "http://localhost:5174") // Portas do Vite
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+    });
+});
+
 var app = builder.Build();
 
-app.UseExceptionHandler(); 
+app.UseExceptionHandler();
+
+// Habilitar CORS
+app.UseCors("AllowReactApp");
 
 app.ApplyMigrations();
 
