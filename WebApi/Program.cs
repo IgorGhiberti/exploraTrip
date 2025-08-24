@@ -32,6 +32,17 @@ builder.Services.AddSwaggerGen(c =>
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     c.IncludeXmlComments(xmlPath);
 });
+// Configuração de CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173", "http://localhost:5174") // Portas do Vite
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+    });
+});
 
 var app = builder.Build();
 
@@ -42,6 +53,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseExceptionHandler(); 
+app.UseExceptionHandler();
+
+// Habilitar CORS
+app.UseCors("AllowReactApp");
 
 app.ApplyMigrations();
 
