@@ -21,7 +21,7 @@ public class User : BaseEntity
     {
         Active = false;
     }
-    public void UpdateUser(string? email, string? userName, string? hashPassword)
+    public void UpdateUser(string? email, string? userName)
     {
         if (!string.IsNullOrEmpty(email))
         {
@@ -31,10 +31,10 @@ public class User : BaseEntity
         {
             UserName = userName;
         }
-        if (!string.IsNullOrEmpty(hashPassword))
-        {
-            HashPassword = hashPassword;
-        }
+    }
+    public void UpdateHashPassword(string hashPassword)
+    {
+        HashPassword = hashPassword;
     }
     //Pro entity
     private User() { }

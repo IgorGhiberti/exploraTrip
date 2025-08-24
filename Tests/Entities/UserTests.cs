@@ -31,10 +31,9 @@ namespace Tests.Entities
         {
             string? expectedEmail = _faker.Person.Email.OrNull(_faker, 0.3f);
             string? expectedUserName = _faker.Person.FullName.OrNull(_faker, 0.1f);
-            string? expectedHashPassword = _faker.Random.AlphaNumeric(20).OrNull(_faker, 0.39f);
 
             var user = new User("igorgh@gmail.com", "Igor", "12345");
-            user.UpdateUser(expectedEmail, expectedUserName, expectedHashPassword);
+            user.UpdateUser(expectedEmail, expectedUserName);
 
             if (!string.IsNullOrWhiteSpace(expectedEmail))
                 Assert.Equal(expectedEmail, user.Email!.Value);
@@ -43,10 +42,6 @@ namespace Tests.Entities
             if (!string.IsNullOrWhiteSpace(expectedUserName))
                 Assert.Equal(expectedUserName, user.UserName);
             Assert.Equal(user.UserName, user.UserName);
-
-            if (!string.IsNullOrWhiteSpace(expectedHashPassword))
-                Assert.Equal(expectedHashPassword, user.HashPassword);
-            Assert.Equal(user.HashPassword, user.HashPassword);
         }
 
         [Fact]

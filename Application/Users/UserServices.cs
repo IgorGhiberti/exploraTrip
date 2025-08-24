@@ -38,7 +38,7 @@ internal class UserServices : IUserServices
     public async Task<ResultData<ShowUserDTO>> GetUserById(Guid id)
     {
         var user = await GetUserRepoById(id);
-        if(!user.IsSuccess)
+        if (!user.IsSuccess)
             return ResultData<ShowUserDTO>.Error(user.Message);
         return ResultData<ShowUserDTO>.Success(new ShowUserDTO(user.Data!.UserName, user.Data.Email!.Value, user.Data.Active));
     }
@@ -58,6 +58,7 @@ internal class UserServices : IUserServices
         if (!user.IsSuccess)
             return ResultData<ShowUserDTO>.Error(user.Message);
         user.Data!.ActivateUser();
+        await _userRepository.UpdateUser(user.Data);
         return ResultData<ShowUserDTO>.Success(new ShowUserDTO(user.Data!.UserName, user.Data.Email!.Value, user.Data.Active));
     }
     public async Task<ResultData<ShowUserDTO>> DisableUser(Guid id)
@@ -66,6 +67,7 @@ internal class UserServices : IUserServices
         if (!user.IsSuccess)
             return ResultData<ShowUserDTO>.Error(user.Message);
         user.Data!.DisableUser();
+        await _userRepository.UpdateUser(user.Data);
         return ResultData<ShowUserDTO>.Success(new ShowUserDTO(user.Data!.UserName, user.Data.Email!.Value, user.Data.Active));
     }
     public async Task<ResultData<bool>> IsUserActive(Guid id)
@@ -96,8 +98,25 @@ internal class UserServices : IUserServices
         var user = await GetUserRepoById(id);
         if (!user.IsSuccess)
             return ResultData<ShowUserDTO>.Error(user.Message);
-        user.Data!.UpdateUser(userDto.EmailVal, userDto.Name, userDto.Password);
+
+        user.Data!.UpdateUser(userDto.EmailVal, userDto.Name);
         await _userRepository.UpdateUser(user.Data);
         return ResultData<ShowUserDTO>.Success(new ShowUserDTO(user.Data!.UserName, user.Data.Email!.Value, user.Data.Active));
+    }
+    public async Task<ResultData<string>> UpdatePassword(Guid id, LoginUserDTO userDto, CancellationToken cancellationToken)
+    {
+        var user = await GetUserRepoById(id);
+        if (!user.IsSuccess)
+            return ResultData<string>.Error(user.Message);
+
+        bool isOldPasswordCorrect = _passwordHelper.ValidateHash(userDto.Password, user.Data!.HashPassword, userDto.Email);
+
+        if (!isOldPasswordCorrect)
+            return ResultData<string>.Error("A senha antiga não está correta.");
+
+        string newPasswordHash = _passwordHelper.CreateHash(userDto.Password, userDto.Email);
+        user.Data.UpdateHashPassword(newPasswordHash);
+        await _userRepository.UpdateUser(user.Data);
+        return ResultData<string>.Success("Senha alterada com sucesso!");
     }
 }

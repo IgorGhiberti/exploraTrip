@@ -1,2 +1,4 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Application.Users.DTOs;
-public record LoginUserDTO(string Password, string Email, Guid Id);
+public record LoginUserDTO([Required] Guid Id, [Required] string Email, [Required] string Password);

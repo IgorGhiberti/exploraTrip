@@ -1,2 +1,2 @@
 namespace Application.Users.DTOs;
-public record UpdateUserDTO(string? Name, string? EmailVal, string? Password);
+public record UpdateUserDTO(string? Name, string? EmailVal);

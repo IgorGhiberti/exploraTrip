@@ -24,6 +24,12 @@ namespace WebApi.Controllers
             _userServices = userServices;
         }
 
+        /// <summary>
+        /// Get all users registered in the system.
+        /// </summary>
+        /// <returns>List of users</returns>
+        /// <response code="200">Success</response>
+        /// <response code="404">Any user found</response>
         [HttpGet]
         public async Task<IActionResult> GetAllUsers()
         {
@@ -33,7 +39,17 @@ namespace WebApi.Controllers
             return users.ToOkResult();
         }
 
+        /// <summary>
+        /// Sign up user in the system. 
+        /// </summary>
+        /// <param name="userDto">User body</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>User data</returns>
+        /// <response code="201">Created</response>
+        /// <response code="400">BadRequest</response>
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> AddUser(CreateUserDTO userDto, CancellationToken cancellationToken)
         {
             var result = await _userServices.AddUser(userDto, cancellationToken);
@@ -42,7 +58,17 @@ namespace WebApi.Controllers
             return result.ToCreateResult($"{baseUri}/{result.Data!.Id}");
         }
 
+        /// <summary>
+        /// Sign in the user.
+        /// </summary>
+        /// <param name="userDto">User body</param>
+        /// <param name="cancellationToken">Cancellation Token</param>
+        /// <returns>If the login is succefull or not.</returns>
+        /// <response code="200">Ok</response>
+        /// <response code="401">Unauthorized</response>
         [HttpPost("authenticate")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> LoginUser(LoginUserDTO userDto, CancellationToken cancellationToken)
         {
             var result = await _userServices.AuthenticateUser(userDto);
@@ -51,34 +77,79 @@ namespace WebApi.Controllers
             return result.ToOkResult();
         }
 
+        /// <summary>
+        /// Update user data.
+        /// </summary>
+        /// <param name="id">User id</param>
+        /// <param name="userDto">User body</param>
+        /// <param name="cancellationToken">Cancellation Token</param>
+        /// <returns>New user data</returns>
+        /// <response code="200">Ok</response>
+        /// <response code="400">BadRequest</response>
         [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> UpdateUser(Guid id, UpdateUserDTO userDto, CancellationToken cancellationToken)
         {
             var result = await _userServices.UpdateUser(id, userDto, cancellationToken);
             return result.ToSingleResult();
         }
 
+        /// <summary>
+        /// Get a specific user by id.
+        /// </summary>
+        /// <param name="id">User id</param>
+        /// <returns>User data</returns>
+        /// <response code="200">Ok</response>
+        /// <response code="400">BadRequest</response>
         [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetUserById(Guid id)
         {
             var result = await _userServices.GetUserById(id);
             return result.ToSingleResult();
         }
 
+        /// <summary>
+        /// Get the current status of the user
+        /// </summary>
+        /// <param name="id">User id</param>
+        /// <returns>If is active or not</returns>
+        /// <response code="200">Ok</response>
+        /// <response code="400">BadRequest</response>
         [HttpGet("isActive/{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> IsUserActive(Guid id)
         {
             var result = await _userServices.IsUserActive(id);
             return result.ToSingleResult();
         }
 
+        /// <summary>
+        /// Active user.
+        /// </summary>
+        /// <param name="id">User id</param>
+        /// <returns>User data</returns>
+        /// <response code="200">Ok</response>
+        /// <response code="400">BadRequest</response>
         [HttpPut("activeUser/{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ActiveUser(Guid id)
         {
             var result = await _userServices.ActiveUser(id);
             return result.ToSingleResult();
         }
 
+        /// <summary>
+        /// Disable user.
+        /// </summary>
+        /// <param name="id">User id</param>
+        /// <returns>User data</returns>
+        /// <response code="200">Ok</response>
+        /// <response code="400">BadRequest</response>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DisableUser(Guid id)
         {

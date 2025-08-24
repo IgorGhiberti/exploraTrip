@@ -10,21 +10,10 @@ namespace Infrastructure.Repositories
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
-        public async Task ActiveUser(User user)
-        {
-            _context.Update(user);
-            await _context.SaveChangesAsync();
-        }
 
         public async Task AddUser(User user)
         {
             _context.Add(user);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task DisableUser(User user)
-        {
-            _context.Update(user);
             await _context.SaveChangesAsync();
         }
 
