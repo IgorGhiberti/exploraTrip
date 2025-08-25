@@ -1,4 +1,5 @@
 using Domain.User;
+using Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
@@ -22,7 +23,7 @@ namespace Infrastructure.Repositories
             return await _context.Users.ToListAsync();
         }
 
-        public async Task<User> GetUserById(Guid id)
+        public async Task<User?> GetUserById(Guid id)
         {
             var user = await _context.Users.SingleOrDefaultAsync(u => u.Id == id);
             return user;
@@ -32,6 +33,14 @@ namespace Infrastructure.Repositories
         {
             _context.Update(user);
             await _context.SaveChangesAsync();
+        }
+        public async Task<User?> GetUserByEmail(string email)
+        {
+            var emailResult = Email.Create(email).Data;
+            var user = await (from u in _context.Users
+                       where u.Email == emailResult
+                       select u).SingleOrDefaultAsync();
+            return user;
         }
     }
 }

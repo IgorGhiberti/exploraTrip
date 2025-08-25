@@ -32,6 +32,7 @@ builder.Services.AddSwaggerGen(c =>
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     c.IncludeXmlComments(xmlPath);
 });
+
 // Configuração de CORS
 builder.Services.AddCors(options =>
 {

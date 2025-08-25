@@ -4,7 +4,8 @@ namespace Domain.User
     {
         Task AddUser(User user);
         Task<List<User>> GetAll();
-        Task<User> GetUserById(Guid id);
+        Task<User?> GetUserById(Guid id);
         Task UpdateUser(User user);
+        Task<User?> GetUserByEmail(string email);
     }
 }

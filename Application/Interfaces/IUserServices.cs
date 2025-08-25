@@ -6,13 +6,14 @@ namespace Application.Interfaces;
 
 public interface IUserServices
 {
-    Task<ResultData<List<ShowUserDTO>>> GetAll();
+    Task<ResultData<List<ViewUserDTO>>> GetAll();
     Task<ResultData<string>> AuthenticateUser(LoginUserDTO userDto);
-    Task<ResultData<ShowUserDTO>> GetUserById(Guid id);
+    Task<ResultData<ViewUserDTO>> GetUserById(Guid id);
     Task<ResultData<User>> GetUserRepoById(Guid id);
-    Task<ResultData<ShowUserDTO>> ActiveUser(Guid id);
-    Task<ResultData<ShowUserDTO>> DisableUser(Guid id);
+    Task<ResultData<ViewUserDTO>> ActiveUser(Guid id);
+    Task<ResultData<ViewUserDTO>> DisableUser(Guid id);
     Task<ResultData<bool>> IsUserActive(Guid id);
-    Task<ResultData<CreateUserDTO>> AddUser(CreateUserDTO userDto, CancellationToken cancellationToken);
-    Task<ResultData<ShowUserDTO>> UpdateUser(Guid id, UpdateUserDTO userDto, CancellationToken cancellationToken);
+    Task<ResultData<ViewUserDTO>> AddUser(CreateUserDTO userDto, CancellationToken cancellationToken);
+    Task<ResultData<ViewUserDTO>> UpdateUser(Guid id, UpdateUserDTO userDto, CancellationToken cancellationToken);
+    Task<ResultData<string>> UpdatePassword(Guid id, UpdatePasswordDTO userDto, CancellationToken cancellationToken);
 }

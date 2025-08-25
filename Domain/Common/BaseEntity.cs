@@ -13,8 +13,8 @@ public class BaseEntity
     {
 
     }
-    public DateTime CreatedDate { get; private set; } = DateTime.UtcNow;
-    public string CreatedBy { get; private set; } = "User default";
+    public DateTime CreatedDate { get; init; } = DateTime.UtcNow;
+    public string CreatedBy { get; init; } = "User default";
     public DateTime UpdatedDate { get; private set; } = DateTime.UtcNow;
     public string UpdatedBy { get; private set; } = "User default";
 

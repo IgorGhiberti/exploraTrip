@@ -8,10 +8,6 @@ public static class ResultExtensions
     {
         return new OkObjectResult(result);
     }
-    public static IActionResult ToOkResultGeneric<T>(this T data)
-    {
-        return new OkObjectResult(ResultData<T>.Success(data));
-    }
     public static IActionResult ToCreateResult<T>(this ResultData<T> data, string path)
     {
         return new CreatedResult(path, data);

@@ -66,7 +66,7 @@ namespace WebApi.Controllers
         /// <returns>If the login is succefull or not.</returns>
         /// <response code="200">Ok</response>
         /// <response code="401">Unauthorized</response>
-        [HttpPost("authenticate")]
+        [HttpPost("login")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> LoginUser(LoginUserDTO userDto, CancellationToken cancellationToken)
@@ -155,6 +155,22 @@ namespace WebApi.Controllers
         {
             var result = await _userServices.DisableUser(id);
             return result.ToSingleResult();
+        }
+
+        /// <summary>
+        /// Update user password.
+        /// </summary>
+        /// <param name="id">User id</param>
+        /// <param name="userDto">User body</param>
+        /// <param name="cancellationToken">Cancellation Token</param>
+        /// <returns></returns>
+        [HttpPut("updatePassword/{id}")]
+        public async Task<IActionResult> UpdatePassword(Guid id, UpdatePasswordDTO userDto, CancellationToken cancellationToken)
+        {
+            var result = await _userServices.UpdatePassword(id, userDto, cancellationToken);
+            if (!result.IsSuccess)
+                return result.ToBadRequestResult();
+            return result.ToOkResult();
         }
     }
 }
