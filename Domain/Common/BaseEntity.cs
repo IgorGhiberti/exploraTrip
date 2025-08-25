@@ -17,8 +17,8 @@ public class BaseEntity
         UpdatedDate = DateTime.UtcNow;
     }
     public DateTime CreatedDate { get; init; } = DateTime.UtcNow;
-    public string CreatedBy { get; init; } = "User default";
+    public string CreatedBy { get; init; } = string.Empty;
     public DateTime UpdatedDate { get; private set; } = DateTime.UtcNow;
-    public string UpdatedBy { get; private set; } = "User default";
+    public string UpdatedBy { get; private set; } = string.Empty;
 
 }
