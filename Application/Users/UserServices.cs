@@ -63,6 +63,7 @@ internal class UserServices : IUserServices
         if (!user.IsSuccess)
             return ResultData<ViewUserDTO>.Error(user.Message);
         user.Data!.ActivateUser();
+        user.Data!.UpdatePropertiesByAndDate(user.Data.Email!.Value);
         await _userRepository.UpdateUser(user.Data);
         return ResultData<ViewUserDTO>.Success(new ViewUserDTO(user.Data!.Id, user.Data!.UserName, user.Data.Email!.Value, user.Data.Active));
     }
@@ -72,6 +73,7 @@ internal class UserServices : IUserServices
         if (!user.IsSuccess)
             return ResultData<ViewUserDTO>.Error(user.Message);
         user.Data!.DisableUser();
+        user.Data!.UpdatePropertiesByAndDate(user.Data.Email!.Value);
         await _userRepository.UpdateUser(user.Data);
         return ResultData<ViewUserDTO>.Success(new ViewUserDTO(user.Data!.Id, user.Data!.UserName, user.Data.Email!.Value, user.Data.Active));
     }
@@ -95,7 +97,7 @@ internal class UserServices : IUserServices
         string hashPassword = _passwordHelper.CreateHash(userDto.Password, userDto.EmailVal);
         var dtoWithHash = userDto with { Password = hashPassword };
         // Inativo até confirmar o código
-        User newUser = new User(dtoWithHash.EmailVal, dtoWithHash.Name, dtoWithHash.Password, false);
+        User newUser = new User(dtoWithHash.EmailVal, dtoWithHash.Name, dtoWithHash.Password, dtoWithHash.EmailVal, false);
         await _userRepository.AddUser(newUser);
         // Enviar e-mail de confirmação
         int randomCode = new Random().Next(100, 999);
@@ -122,6 +124,7 @@ internal class UserServices : IUserServices
             return ResultData<ViewUserDTO>.Error(user.Message);
 
         user.Data!.UpdateUser(userDto.EmailVal, userDto.Name);
+        user.Data!.UpdatePropertiesByAndDate(userDto.EmailVal!);
         await _userRepository.UpdateUser(user.Data);
         return ResultData<ViewUserDTO>.Success(new ViewUserDTO(user.Data!.Id, user.Data!.UserName, user.Data.Email!.Value, user.Data.Active));
     }
@@ -141,6 +144,7 @@ internal class UserServices : IUserServices
 
         string newPasswordHash = _passwordHelper.CreateHash(userDto.Password, userDto.Email);
         user.Data!.UpdateHashPassword(newPasswordHash);
+        user.Data!.UpdatePropertiesByAndDate(userDto.Email);
         await _userRepository.UpdateUser(user.Data);
         return ResultData<string>.Success("Senha alterada com sucesso!");
     }

@@ -5,7 +5,7 @@ namespace Domain.User;
 
 public class User : BaseEntity
 {
-    public User(string email, string userName, string hashPassword, bool active = true)
+    public User(string email, string userName, string hashPassword, string createdBy, bool active = true) : base(DateTime.UtcNow, createdBy, DateTime.UtcNow, createdBy)
     {
         Id = Guid.NewGuid();
         Email = Email.Create(email).Data;

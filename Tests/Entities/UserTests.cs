@@ -17,7 +17,7 @@ namespace Tests.Entities
             var expectedHashPassword = _faker.Random.AlphaNumeric(20);
             var expectedActive = true;
 
-            var user = new User(expectedEmail, expectedUserName, expectedHashPassword, expectedActive);
+            var user = new User(expectedEmail, expectedUserName, expectedHashPassword, expectedEmail, expectedActive);
 
             //Assert
             Assert.Equal(expectedEmail, user.Email!.Value);
@@ -32,7 +32,7 @@ namespace Tests.Entities
             string? expectedEmail = _faker.Person.Email.OrNull(_faker, 0.3f);
             string? expectedUserName = _faker.Person.FullName.OrNull(_faker, 0.1f);
 
-            var user = new User("igorgh@gmail.com", "Igor", "12345");
+            var user = new User("igorgh@gmail.com", "Igor", "12345", "igorgh@gmail.com");
             user.UpdateUser(expectedEmail, expectedUserName);
 
             if (!string.IsNullOrWhiteSpace(expectedEmail))
@@ -47,7 +47,7 @@ namespace Tests.Entities
         [Fact]
         public void ActiveUserMethod_GivenAnyUserActiveParameter_ThenShouldSetActiveEqualsTrue()
         {
-            var user = new User("igorgh@gmail.com", "Igor", "12345", _faker.Random.Bool());
+            var user = new User("igorgh@gmail.com", "Igor", "12345", "igorgh@gmail.com", _faker.Random.Bool());
 
             user.ActivateUser();
 
@@ -57,7 +57,7 @@ namespace Tests.Entities
         [Fact]
         public void DisableUserMethod_GivenAnyUserActiveParameter_ThenShouldSetActiveEqualsFalse()
         {
-            var user = new User("igorgh@gmail.com", "Igor", "12345", _faker.Random.Bool());
+            var user = new User("igorgh@gmail.com", "Igor", "12345", "igorgh@gmail.com", _faker.Random.Bool());
 
             user.DisableUser();
 

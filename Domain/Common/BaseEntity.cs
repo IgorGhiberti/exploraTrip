@@ -10,8 +10,11 @@ public class BaseEntity
         UpdatedBy = updatedBy;
     }
     public BaseEntity()
+    {}
+    public void UpdatePropertiesByAndDate(string userEmail)
     {
-
+        UpdatedBy = userEmail;
+        UpdatedDate = DateTime.UtcNow;
     }
     public DateTime CreatedDate { get; init; } = DateTime.UtcNow;
     public string CreatedBy { get; init; } = "User default";

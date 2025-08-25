@@ -201,6 +201,13 @@ namespace WebApi.Controllers
             return result.ToOkResult();
         }
 
+        /// <summary>
+        /// Reset user password.
+        /// </summary>
+        /// <param name="userDto">User body</param>
+        /// <returns>If the operation was succeful</returns>
+        /// <response code="200">Ok</response>
+        /// <response code="400">BadRequest</response>
         [HttpPut("resetPassword")]
         public async Task<IActionResult> ResetPassword(UpdatePasswordDTO userDto)
         {
