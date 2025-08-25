@@ -1,3 +1,4 @@
+using Application.Enum;
 using Application.Users;
 using Application.Users.DTOs;
 using Domain.DomainResults;
@@ -16,4 +17,7 @@ public interface IUserServices
     Task<ResultData<ViewUserDTO>> AddUser(CreateUserDTO userDto, CancellationToken cancellationToken);
     Task<ResultData<ViewUserDTO>> UpdateUser(Guid id, UpdateUserDTO userDto, CancellationToken cancellationToken);
     Task<ResultData<string>> UpdatePassword(Guid id, UpdatePasswordDTO userDto, CancellationToken cancellationToken);
+    Task<ResultData<bool>> ConfirmEmailCode(string userEmail, int code, OperationEnum operationEnum);
+    Task<ResultData<string>> ForgetPassword(string email);
+    Task<ResultData<ViewUserDTO>> ResetPassword(UpdatePasswordDTO userDto);
 }

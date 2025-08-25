@@ -1,15 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+using Application.Enum;
 using Application.Interfaces;
 using Application.Users;
 using Application.Users.DTOs;
-using Domain.User;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using WebApi.Helpers;
 
 namespace WebApi.Controllers
 {
@@ -163,11 +156,55 @@ namespace WebApi.Controllers
         /// <param name="id">User id</param>
         /// <param name="userDto">User body</param>
         /// <param name="cancellationToken">Cancellation Token</param>
-        /// <returns></returns>
+        /// <returns>A message if the update had been succefull</returns>
+        /// <response code="200">Ok</response>
+        /// <response code="400">BadRequest</response> 
         [HttpPut("updatePassword/{id}")]
         public async Task<IActionResult> UpdatePassword(Guid id, UpdatePasswordDTO userDto, CancellationToken cancellationToken)
         {
             var result = await _userServices.UpdatePassword(id, userDto, cancellationToken);
+            if (!result.IsSuccess)
+                return result.ToBadRequestResult();
+            return result.ToOkResult();
+        }
+
+        /// <summary>
+        /// Confirme the code send by email
+        /// </summary>
+        /// <param name="userDto">User body</param>
+        /// <param name="operationNumber">Operation number</param>
+        /// <returns>A true or false value</returns>
+        /// <response code="200">Ok</response>
+        /// <response code="400">BadRequest</response> 
+        [HttpPost("confirmCode/{operationNumber}")]
+        public async Task<IActionResult> ConfirmCode(ConfirmUserCodeDTO userDto, int operationNumber)
+        {
+            var result = await _userServices.ConfirmEmailCode(userDto.Email, userDto.Code, (OperationEnum)operationNumber);
+            if (!result.IsSuccess)
+                return result.ToBadRequestResult();
+            return result.ToOkResult();
+        }
+
+        /// <summary>
+        /// Update user password when he forgots the current.
+        /// </summary>
+        /// <param name="userEmail">User email</param>
+        /// <returns>The result if the operation is succefull or not.</returns>
+        /// <response code="200">Ok</response>
+        /// <response code="400">BadRequest</response> 
+        [HttpPost("forgotPassword/{userEmail}")]
+        public async Task<IActionResult> ForgotPassword(string userEmail)
+        {
+            var result = await _userServices.ForgetPassword(userEmail);
+            if (!result.IsSuccess)
+                return result.ToBadRequestResult();
+            return result.ToOkResult();
+        }
+
+        [HttpPut("resetPassword")]
+        public async Task<IActionResult> ResetPassword(UpdatePasswordDTO userDto)
+        {
+            var result = await _userServices.ResetPassword(userDto);
             if (!result.IsSuccess)
                 return result.ToBadRequestResult();
             return result.ToOkResult();

@@ -15,6 +15,8 @@ builder.Services.AddControllers();
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<GlobalExceptionsHandler>();
 builder.Services.AddScoped<IPasswordCryptography, Cryptography>();
+builder.Services.AddScoped<ICache, Cache>();
+builder.Services.AddMemoryCache();
 
 //Swagger
 builder.Services.AddEndpointsApiExplorer();
