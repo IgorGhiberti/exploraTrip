@@ -33,7 +33,7 @@ namespace WebApi.Controllers
         }
 
         /// <summary>
-        /// Sign up user in the system. 
+        /// Register a new user in the system.
         /// </summary>
         /// <param name="userDto">User body</param>
         /// <param name="cancellationToken">Cancellation token</param>
@@ -52,11 +52,11 @@ namespace WebApi.Controllers
         }
 
         /// <summary>
-        /// Sign in the user.
+        /// Authenticate a user in the system.
         /// </summary>
         /// <param name="userDto">User body</param>
         /// <param name="cancellationToken">Cancellation Token</param>
-        /// <returns>If the login is succefull or not.</returns>
+        /// <returns>Indicates whether the login was successful.</returns>
         /// <response code="200">Ok</response>
         /// <response code="401">Unauthorized</response>
         [HttpPost("login")]
@@ -105,7 +105,7 @@ namespace WebApi.Controllers
         }
 
         /// <summary>
-        /// Get the current status of the user
+        /// Check whether the user is active.
         /// </summary>
         /// <param name="id">User id</param>
         /// <returns>If is active or not</returns>
@@ -121,7 +121,7 @@ namespace WebApi.Controllers
         }
 
         /// <summary>
-        /// Active user.
+        /// Activate a user account.
         /// </summary>
         /// <param name="id">User id</param>
         /// <returns>User data</returns>
@@ -156,7 +156,7 @@ namespace WebApi.Controllers
         /// <param name="id">User id</param>
         /// <param name="userDto">User body</param>
         /// <param name="cancellationToken">Cancellation Token</param>
-        /// <returns>A message if the update had been succefull</returns>
+        /// <returns>A message indicating whether the update was successful.</returns>
         /// <response code="200">Ok</response>
         /// <response code="400">BadRequest</response> 
         [HttpPut("updatePassword/{id}")]
@@ -169,7 +169,7 @@ namespace WebApi.Controllers
         }
 
         /// <summary>
-        /// Confirme the code send by email
+        /// Confirm the code sent by email.
         /// </summary>
         /// <param name="userDto">User body</param>
         /// <param name="operationNumber">Operation number</param>
@@ -186,10 +186,10 @@ namespace WebApi.Controllers
         }
 
         /// <summary>
-        /// Update user password when he forgots the current.
+        /// Update the user's password when they forget the current one.
         /// </summary>
         /// <param name="userEmail">User email</param>
-        /// <returns>The result if the operation is succefull or not.</returns>
+        /// <returns>Indicates whether the operation was successful.</returns>
         /// <response code="200">Ok</response>
         /// <response code="400">BadRequest</response> 
         [HttpPost("forgotPassword/{userEmail}")]
