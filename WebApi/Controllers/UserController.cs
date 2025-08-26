@@ -11,7 +11,6 @@ namespace WebApi.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserServices _userServices;
-        private readonly string baseUri = "http://localhost:5052/api/user";
         public UserController(IUserServices userServices)
         {
             _userServices = userServices;
@@ -48,7 +47,7 @@ namespace WebApi.Controllers
             var result = await _userServices.AddUser(userDto, cancellationToken);
             if (!result.IsSuccess)
                 return result.ToBadRequestResult();
-            return result.ToCreateResult($"{baseUri}/{result.Data!.Id}");
+            return result.ToCreateResult($"api/user/{result.Data!.Id}");
         }
 
         /// <summary>

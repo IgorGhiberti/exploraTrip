@@ -176,7 +176,7 @@ internal class UserServices : IUserServices
         // Enviar e-mail de confirmação
         int randomCode = new Random().Next(100, 999);
         string emailBody = $"Seja bem vindo! \nSegue o código para confirmação {randomCode}";
-        string emailSubject = $"Troca de email";
+        string emailSubject = $"Troca de senha";
         SendEmailHelper.SendEmail(email, emailBody, emailSubject);
         // Salva em cache o randomCode
         _cache.StoreRandomNumber(randomCode);

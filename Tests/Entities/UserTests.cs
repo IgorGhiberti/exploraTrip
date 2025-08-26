@@ -1,12 +1,19 @@
 using Xunit;
 using Domain.User;
 using Bogus;
+using Domain.ValueObjects;
 
 namespace Tests.Entities
 {
     public sealed class UserTests
     {
         private readonly Faker _faker = new("pt_BR");
+        private readonly User _user;
+
+        public UserTests()
+        {
+            _user = new User(_faker.Person.Email, _faker.Person.FullName, _faker.Lorem.Text(), _faker.Person.Email, _faker.Random.Bool());
+        }
 
         [Fact]
         public void Constructor_GivenAllParameters_ThenShouldSetThePropertiesCorrectly()
@@ -32,36 +39,65 @@ namespace Tests.Entities
             string? expectedEmail = _faker.Person.Email.OrNull(_faker, 0.3f);
             string? expectedUserName = _faker.Person.FullName.OrNull(_faker, 0.1f);
 
-            var user = new User("igorgh@gmail.com", "Igor", "12345", "igorgh@gmail.com");
-            user.UpdateUser(expectedEmail, expectedUserName);
+            _user.UpdateUser(expectedEmail, expectedUserName);
 
             if (!string.IsNullOrWhiteSpace(expectedEmail))
-                Assert.Equal(expectedEmail, user.Email!.Value);
-            Assert.Equal(user.Email!.Value, user.Email!.Value);
+                Assert.Equal(expectedEmail, _user.Email!.Value);
+            Assert.Equal(_user.Email!.Value, _user.Email!.Value);
 
             if (!string.IsNullOrWhiteSpace(expectedUserName))
-                Assert.Equal(expectedUserName, user.UserName);
-            Assert.Equal(user.UserName, user.UserName);
+                Assert.Equal(expectedUserName, _user.UserName);
+            Assert.Equal(_user.UserName, _user.UserName);
         }
 
         [Fact]
         public void ActiveUserMethod_GivenAnyUserActiveParameter_ThenShouldSetActiveEqualsTrue()
         {
-            var user = new User("igorgh@gmail.com", "Igor", "12345", "igorgh@gmail.com", _faker.Random.Bool());
+            _user.ActivateUser();
 
-            user.ActivateUser();
-
-            Assert.True(user.Active);
+            Assert.True(_user.Active);
         }
 
         [Fact]
         public void DisableUserMethod_GivenAnyUserActiveParameter_ThenShouldSetActiveEqualsFalse()
         {
-            var user = new User("igorgh@gmail.com", "Igor", "12345", "igorgh@gmail.com", _faker.Random.Bool());
+            _user.DisableUser();
 
-            user.DisableUser();
+            Assert.False(_user.Active);
+        }
 
-            Assert.False(user.Active);
+        [Fact]
+        public void UpdateHashPasswordMethod_GivenAnyStringParameter_ThenShouldSetTheNewHashPassword()
+        {
+            string expectedHash = _faker.Lorem.Text();
+            _user.UpdateHashPassword(expectedHash);
+
+            Assert.Equal(expectedHash, _user.HashPassword);
+        }
+
+        [Fact]
+        public void EmailCreateMethod_GivenValidEmail_ShouldReturnSuccessResultWithCorrectValue()
+        {
+            string expectedEmailVal = _faker.Person.Email;
+
+            var result = Email.Create(expectedEmailVal);
+
+            Assert.True(result.IsSuccess);
+            Assert.NotNull(result.Data);
+            Assert.Equal(expectedEmailVal, result.Data!.Value);
+        }
+
+        [Fact]
+        public void EmailCreateMethod_GivenInvalidEmail_ShouldReturnNotSuccessResultWithErrorMessage()
+        {
+            string expectedIncorrectEmail = _faker.Person.FullName;
+            string expectedMessage = "Email inválido";
+
+            var result = Email.Create(expectedIncorrectEmail);
+
+            Assert.False(result.IsSuccess);
+            Assert.Null(result.Data);
+            Assert.Equal(result.Message, expectedMessage);
         }
     }
 }
