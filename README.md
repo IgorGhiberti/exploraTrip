@@ -26,7 +26,8 @@ O Explora Trip é um aplicativo Web que visa facilitar a vida dos exploradores e
 
 ### Arquitetura
 
-<img width="1901" height="1351" alt="Arquitetura drawio (1)" src="https://github.com/user-attachments/assets/5625af19-f42d-4dff-b6f3-1c13f71b3a01" />
+<img width="1651" height="1351" alt="Arquitetura ExploraTrip" src="https://github.com/user-attachments/assets/7bd5053f-8aad-493b-a0a9-d60ba0e00196" />
+
 
 
 
