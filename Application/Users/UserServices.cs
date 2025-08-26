@@ -24,8 +24,6 @@ internal class UserServices : IUserServices
     public async Task<ResultData<List<ViewUserDTO>>> GetAll()
     {
         List<User> users = await _userRepository.GetAll();
-        if (!users.Any())
-            return ResultData<List<ViewUserDTO>>.Error("Nenhum usuário cadastrado.");
         var result = from u in users
                      select new ViewUserDTO(u.Id, u.UserName, u.Email!.Value, u.Active);
         return ResultData<List<ViewUserDTO>>.Success(result.ToList());

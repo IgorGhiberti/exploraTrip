@@ -21,13 +21,10 @@ namespace WebApi.Controllers
         /// </summary>
         /// <returns>List of users</returns>
         /// <response code="200">Success</response>
-        /// <response code="404">Any user found</response>
         [HttpGet]
         public async Task<IActionResult> GetAllUsers()
         {
             var users = await _userServices.GetAll();
-            if (!users.IsSuccess)
-                return users.ToNotFoundResult();
             return users.ToOkResult();
         }
 

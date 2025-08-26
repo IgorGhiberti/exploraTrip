@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.8" />
+    <InternalsVisibleTo Include="Tests" />
   </ItemGroup>
 
   <PropertyGroup>
