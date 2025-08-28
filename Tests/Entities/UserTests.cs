@@ -1,5 +1,5 @@
 using Xunit;
-using Domain.User;
+using Domain.Entities;
 using Bogus;
 using Domain.ValueObjects;
 
@@ -91,7 +91,7 @@ namespace Tests.Entities
         public void EmailCreateMethod_GivenInvalidEmail_ShouldReturnNotSuccessResultWithErrorMessage()
         {
             string expectedIncorrectEmail = _faker.Person.FullName;
-            string expectedMessage = "Email inválido";
+            string expectedMessage = "Invalid email format.";
 
             var result = Email.Create(expectedIncorrectEmail);
 

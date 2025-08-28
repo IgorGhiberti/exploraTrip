@@ -12,7 +12,7 @@ public partial record Email
     {
         if (string.IsNullOrEmpty(value) || !EmailRegex().IsMatch(value))
         {
-            return ResultData<Email>.Error("Email inválido");
+            return ResultData<Email>.Error("Invalid email format.");
         }
 
         return ResultData<Email>.Success(new Email(value));

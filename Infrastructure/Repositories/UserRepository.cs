@@ -1,4 +1,5 @@
-using Domain.User;
+using Domain.Entities;
+using Domain.Intfaces;
 using Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 

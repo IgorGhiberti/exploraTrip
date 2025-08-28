@@ -4,7 +4,8 @@ using Application.Enum;
 using Application.Interfaces;
 using Application.Users.DTOs;
 using Domain.DomainResults;
-using Domain.User;
+using Domain.Entities;
+using Domain.Intfaces;
 using Domain.ValueObjects;
 
 namespace Application.Users;
@@ -35,7 +36,7 @@ internal class UserServices : IUserServices
             return ResultData<string>.Error(resultUserRepo.Message);
         string storedHash = resultUserRepo.Data!.HashPassword;
         bool isCorrectPassword = _passwordHelper.ValidateHash(userDto.Password, storedHash, userDto.Email);
-        return isCorrectPassword ? ResultData<string>.Success("Usuário autenticado com sucesso!") : ResultData<string>.Error("Falha na autenticação");
+        return isCorrectPassword ? ResultData<string>.Success("User successfully authenticated!") : ResultData<string>.Error("Authentication failed.");
     }
 
     public async Task<ResultData<ViewUserDTO>> GetUserById(Guid id)
@@ -50,7 +51,7 @@ internal class UserServices : IUserServices
         User? user = await _userRepository.GetUserById(id);
         if (user == null)
         {
-            return ResultData<User>.Error("Usuário não existe.");
+            return ResultData<User>.Error("User does not exist.");
         }
         return ResultData<User>.Success(user);
     }
@@ -86,7 +87,7 @@ internal class UserServices : IUserServices
     {
         var user = await GetUserByEmail(userDto.EmailVal);
         if (user.IsSuccess)
-            return ResultData<ViewUserDTO>.Error("Usuário já cadastrado no sistema.");
+            return ResultData<ViewUserDTO>.Error("User already registered in the system.");
         var emailResult = Email.Create(userDto.EmailVal);
         if (!emailResult.IsSuccess)
         {
@@ -111,7 +112,7 @@ internal class UserServices : IUserServices
     {
         var user = await _userRepository.GetUserByEmail(email);
         if (user == null)
-            return ResultData<User>.Error("Email não cadastrado no sistema.");
+            return ResultData<User>.Error("Email not registered in the system.");
         return ResultData<User>.Success(user);
     }
 
@@ -137,14 +138,14 @@ internal class UserServices : IUserServices
             bool isOldPasswordCorrect = _passwordHelper.ValidateHash(userDto.OldPassword, user.Data!.HashPassword, userDto.Email);
 
             if (!isOldPasswordCorrect)
-                return ResultData<string>.Error("A senha antiga não está correta.");
+                return ResultData<string>.Error("The old password is not correct.");
         }
 
         string newPasswordHash = _passwordHelper.CreateHash(userDto.Password, userDto.Email);
         user.Data!.UpdateHashPassword(newPasswordHash);
         user.Data!.UpdatePropertiesByAndDate(userDto.Email);
         await _userRepository.UpdateUser(user.Data);
-        return ResultData<string>.Success("Senha alterada com sucesso!");
+        return ResultData<string>.Success("Password successfully updated!");
     }
     public async Task<ResultData<bool>> ConfirmEmailCode(string userEmail, int code, OperationEnum operationEnum)
     {
@@ -163,7 +164,7 @@ internal class UserServices : IUserServices
             _cache.StoreEmail(userEmail);
             return ResultData<bool>.Success(true);
         }
-        return ResultData<bool>.Error("Código inválido.");
+        return ResultData<bool>.Error("Invalid confirm code.");
     }
     public async Task<ResultData<string>> ForgetPassword(string email)
     {
@@ -179,13 +180,13 @@ internal class UserServices : IUserServices
         // Salva em cache o randomCode
         _cache.StoreRandomNumber(randomCode);
 
-        return ResultData<string>.Success("Código enviado com sucesso!");
+        return ResultData<string>.Success("Confirmation code sent succefully!");
     }
     public async Task<ResultData<ViewUserDTO>> ResetPassword(UpdatePasswordDTO userDto)
     {
         string? userEmail = _cache.GetUserEmail();
         if (userEmail == null)
-            return ResultData<ViewUserDTO>.Error("Código inválido ou expirado.");
+            return ResultData<ViewUserDTO>.Error("Invalid of expired code.");
         var user = await GetUserByEmail(userEmail);
         if (!user.IsSuccess)
             return ResultData<ViewUserDTO>.Error(user.Message);

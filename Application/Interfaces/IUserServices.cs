@@ -2,7 +2,7 @@ using Application.Enum;
 using Application.Users;
 using Application.Users.DTOs;
 using Domain.DomainResults;
-using Domain.User;
+using Domain.Entities;
 namespace Application.Interfaces;
 
 public interface IUserServices

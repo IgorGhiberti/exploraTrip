@@ -1,7 +1,7 @@
 using Domain.Common;
 using Domain.ValueObjects;
 
-namespace Domain.User;
+namespace Domain.Entities;
 
 public class User : BaseEntity
 {
@@ -43,4 +43,5 @@ public class User : BaseEntity
     public Email? Email { get; private set; }
     public string UserName { get; private set; } = string.Empty;
     public bool Active { get; private set; }
+    public ICollection<TripParticipant>? TripParticipants { get; private set; }
 }

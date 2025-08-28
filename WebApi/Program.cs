@@ -49,6 +49,8 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -56,7 +58,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseExceptionHandler(); 
-app.UseExceptionHandler();
 
 // Habilitar CORS
 app.UseCors("AllowReactApp");

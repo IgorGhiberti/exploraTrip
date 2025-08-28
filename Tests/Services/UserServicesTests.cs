@@ -1,12 +1,13 @@
 using Application.Interfaces;
 using Bogus;
-using Domain.User;
+using Domain.Entities;
 using Moq;
 using Xunit;
 using Application.Users;
 using System.Threading.Tasks;
 using Application.Users.DTOs;
 using Domain.ValueObjects;
+using Domain.Intfaces;
 
 namespace Tests.Services
 {
@@ -55,6 +56,60 @@ namespace Tests.Services
                 Assert.Equal(originalUser.Email!.Value, dto.Email);
                 Assert.Equal(originalUser.Active, dto.IsActive);
             });
+        }
+
+        [Fact]
+        public async Task GivenTheCorrectCredentials_ThenShouldAuthenticateTheUser()
+        {
+            string expectedAnswer = "User successfully authenticated!";
+            string email = _faker.Person.Email;
+            var user = new User(email, _faker.Person.FullName, _faker.Lorem.Text(), email, _faker.Random.Bool());
+            _userRepositoryMock.Setup(repo => repo.GetUserByEmail(user.Email!.Value)).ReturnsAsync(user);
+
+            LoginUserDTO userDto = new LoginUserDTO(user.Email!.Value, user.HashPassword);
+            string userStoredHash = user.HashPassword;
+            _passwordCryptographyMock.Setup(p => p.ValidateHash(userDto.Password, userStoredHash, userDto.Email)).Returns(true);
+
+            var result = await _userServices.AuthenticateUser(userDto);
+
+            Assert.True(result.IsSuccess);
+            Assert.NotNull(result.Data);
+            Assert.Equal(result.Data, expectedAnswer);
+        }
+
+        [Fact]
+        public async Task GivenTheWrongCredentials_ThenShouldReturnAErrorMessage()
+        {
+            string expectedAnswer = "Authentication failed.";
+            string email = _faker.Person.Email;
+            var user = new User(email, _faker.Person.FullName, _faker.Lorem.Text(), email, _faker.Random.Bool());
+            _userRepositoryMock.Setup(repo => repo.GetUserByEmail(user.Email!.Value)).ReturnsAsync(user);
+
+            LoginUserDTO userDto = new LoginUserDTO(user.Email!.Value, user.HashPassword);
+            string userStoredHash = "12345";
+            _passwordCryptographyMock.Setup(p => p.ValidateHash(userDto.Password, userStoredHash, userDto.Email)).Returns(false);
+
+            var result = await _userServices.AuthenticateUser(userDto);
+
+            Assert.False(result.IsSuccess);
+            Assert.Null(result.Data);
+            Assert.Equal(result.Message, expectedAnswer);
+        }
+
+        [Fact]
+        public async Task GivenAnEmailThatDoesNotExist_ThenShouldReturnAErrorMessage()
+        {
+            string expectedResult = "Email not registered in the system.";
+            string emailUser = _faker.Person.Email;
+            _userRepositoryMock.Setup(repo => repo.GetUserByEmail(emailUser)).ReturnsAsync((User?)null);
+
+            LoginUserDTO userDto = new LoginUserDTO(_faker.Lorem.Text(), emailUser);
+
+            var result = await _userServices.AuthenticateUser(userDto);
+
+            Assert.False(result.IsSuccess);
+            Assert.Null(result.Data);
+            Assert.Equal(result.Message, expectedResult);
         }
     }
 }
