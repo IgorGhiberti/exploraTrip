@@ -26,5 +26,12 @@ public class LocalConfiguration : BaseEntityConfiguration<Local>
             .IsRequired();
 
         builder.Property(l => l.Notes);
+
+        builder.Property(l => l.LocalBudget);
+
+        builder.HasMany(l => l.Activities)
+            .WithOne(a => a.Local)
+            .HasForeignKey(a => a.LocalId)
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }

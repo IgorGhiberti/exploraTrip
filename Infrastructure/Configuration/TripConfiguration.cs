@@ -1,5 +1,4 @@
 using Domain.Entities;
-using Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -27,14 +26,11 @@ public class TripConfiguration : BaseEntityConfiguration<Trip>
         builder.Property(t => t.DateEnd)
             .IsRequired();
 
-        builder.Property(t => t.Budget)
-            .HasConversion(
-                b => b!.TotalValue,
-                totalValue => TripBudget.CreateTripBudget(totalValue).Data);
+        builder.Property(t => t.TripBudget);
 
         builder.HasMany(t => t.Locals)
             .WithOne(l => l.Trip)
-            .HasForeignKey(l => l.LocalId)
+            .HasForeignKey(l => l.TripId)
             .OnDelete(DeleteBehavior.NoAction);
         
     }
