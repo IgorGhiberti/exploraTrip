@@ -4,7 +4,15 @@ namespace Domain.Entities;
 
 public class Activitie : BaseEntity
 {
-    private Activitie() {}
+    public Activitie(string activitieName, DateTime date, Local local, string[]? notes = null)
+    {
+        ActivitieId = Guid.NewGuid();
+        ActivitieName = activitieName;
+        ActivitieDate = date;
+        Notes = notes;
+        Local = local;
+    }
+    private Activitie() { }
     public Guid ActivitieId { get; init; }
     public string ActivitieName { get; private set; } = string.Empty;
     public DateTime ActivitieDate { get; private set; } = DateTime.UtcNow;

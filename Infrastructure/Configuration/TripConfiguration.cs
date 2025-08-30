@@ -30,7 +30,7 @@ public class TripConfiguration : BaseEntityConfiguration<Trip>
         builder.Property(t => t.Budget)
             .HasConversion(
                 b => b!.TotalValue,
-                totalValue => Budget.CreateTripBudget(totalValue).Data);
+                totalValue => TripBudget.CreateTripBudget(totalValue).Data);
 
         builder.HasMany(t => t.Locals)
             .WithOne(l => l.Trip)

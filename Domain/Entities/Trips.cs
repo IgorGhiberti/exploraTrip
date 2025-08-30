@@ -6,13 +6,13 @@ using Domain.ValueObjects;
 namespace Domain.Entities;
 public class Trip : BaseEntity
 {
-    public Trip(string name, DateTime dateStart, DateTime dateEnd, decimal? budget, string[] notes, User user, RoleEnum role)
+    public Trip(string name, DateTime dateStart, DateTime dateEnd, decimal? budget, User user, RoleEnum role, string[]? notes = null)
     {
         TripId = Guid.NewGuid();
         Name = name; 
         DateStart = ValidateDateStart(dateStart).Data;
         DateEnd = ValidateEndDate(dateEnd).Data; 
-        Budget = Budget.CreateTripBudget(budget).Data; 
+        Budget = TripBudget.CreateTripBudget(budget).Data; 
         Notes = notes;
         TripParticipants.Add(new TripParticipant(this, user, role));
     }
@@ -51,7 +51,7 @@ public class Trip : BaseEntity
     public string Name { get; private set; } = string.Empty;
     public DateTime DateStart { get; init; } = DateTime.UtcNow;
     public DateTime DateEnd { get; private set; }
-    public Budget? Budget { get; private set; }
+    public TripBudget? Budget { get; private set; }
     public ICollection<Local>? Locals { get; private set; }
     public ICollection<TripParticipant> TripParticipants { get; private set; } = new List<TripParticipant>();
     public string[]? Notes{ get; private set; }
