@@ -13,8 +13,17 @@ internal class TripRepository : ITripRepository
     }
     public async Task AddTrip(Trip trip)
     {
-        _context.Add(trip);
-        await _context.SaveChangesAsync();
+        try
+        {
+            _context.Add(trip);
+            await _context.SaveChangesAsync();
+        }
+        catch (System.Exception ex)
+        {
+            
+            throw new Exception(ex.Message);
+        }
+        
     }
 
     public async Task DeleteTrip(Trip trip)
