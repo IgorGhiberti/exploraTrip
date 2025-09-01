@@ -1,4 +1,7 @@
+using System.ComponentModel.Design;
+using System.Threading.Tasks;
 using Application.DTOs.TripDTOs;
+using Application.DTOs.UserDTOs;
 using Application.Interfaces;
 using Domain.DomainResults;
 using Domain.Entities;
@@ -41,7 +44,6 @@ internal class TripServices : ITripServices
         }
         return ResultData<ViewTripDto>.Success(new ViewTripDto(trip.TripId, trip.Name, trip.DateStart, trip.DateEnd, tripDto.UserRoles));
     }
-
     private ResultData<string> ValidateTripInfo(decimal? budget, DateTime dateStart, DateTime dateEnd)
     {
         var resultBudget = Trip.ValidateBudget(budget);
@@ -57,5 +59,14 @@ internal class TripServices : ITripServices
             return ResultData<string>.Error(resultDateEnd.Message);
 
         return ResultData<string>.Success(string.Empty);
+    }
+    public async Task<ResultData<ViewTripDto>> GetTripById(Guid id)
+    {
+        var tripModel = await _tripRepository.GetTripById(id);
+        if (tripModel == null)
+            return ResultData<ViewTripDto>.Error("Trip not found.");
+        List<UserRoleDTO> usersRoleDto = (from tp in tripModel.TripParticipantModels
+                                         select new UserRoleDTO(tp.UserEmail!.Value, tp.Role)).ToList();
+        return ResultData<ViewTripDto>.Success(new ViewTripDto(id, tripModel.TripName, tripModel.StartDate, tripModel.EndDate, usersRoleDto));
     }
 }

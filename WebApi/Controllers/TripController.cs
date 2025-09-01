@@ -31,5 +31,23 @@ namespace WebApi.Controllers
                 return result.ToBadRequestResult();
             return result.ToCreateResult($"api/trip/{result.Data!.Id}");
         }
+
+        /// <summary>
+        /// Get the trip with users relateds
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Trip</returns>
+        /// /// <response code="201">Created</response>
+        /// <response code="404">NotFound</response>
+        [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetTripById(Guid id)
+        {
+            var result = await _tripServices.GetTripById(id);
+            if (!result.IsSuccess)
+                return result.ToNotFoundResult();
+            return result.ToOkResult();
+        }
     }
 }

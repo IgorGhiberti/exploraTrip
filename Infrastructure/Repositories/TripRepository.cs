@@ -1,6 +1,9 @@
 using Domain.Entities;
 using Domain.Interfaces;
+using Domain.Models;
+using Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 
 namespace Infrastructure.Repositories;
 
@@ -13,17 +16,8 @@ internal class TripRepository : ITripRepository
     }
     public async Task AddTrip(Trip trip)
     {
-        try
-        {
-            _context.Add(trip);
-            await _context.SaveChangesAsync();
-        }
-        catch (System.Exception ex)
-        {
-            
-            throw new Exception(ex.Message);
-        }
-        
+        _context.Add(trip);
+        await _context.SaveChangesAsync();
     }
 
     public async Task DeleteTrip(Trip trip)
@@ -37,9 +31,27 @@ internal class TripRepository : ITripRepository
         return await _context.Trips.ToListAsync();
     }
 
-    public async Task<Trip?> GetTripById(Guid id)
+    public async Task<TripModel?> GetTripById(Guid id)
     {
-        return await _context.Trips.SingleOrDefaultAsync(t => t.TripId == id);
+        var tripResult = await (from tp in _context.TripParticipants
+                                join t in _context.Trips on tp.TripId equals id
+                                join u in _context.Users on tp.UserId equals u.Id
+                                select new TripModel
+                                {
+                                    TripName = t.Name,
+                                    StartDate = t.DateStart,
+                                    EndDate = t.DateEnd,
+                                    TripBudget = t.TripBudget,
+                                    Notes = t.Notes,
+                                    TripParticipantModels = (from tripParticipant in t.TripParticipants
+                                                             select new TripParticipantModel()
+                                                             {
+                                                                 UserName = tripParticipant.User.UserName,
+                                                                 UserEmail = tripParticipant.User.Email,
+                                                                 Role = tripParticipant.Role
+                                                             }).OrderBy(trp => trp.Role).ToList()
+                                }).FirstOrDefaultAsync();
+        return tripResult;
     }
 
     public async Task UpdateTrip(Trip trip)
