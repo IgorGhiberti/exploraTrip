@@ -16,41 +16,20 @@ public class Trip : BaseEntity
             TripBudget = tripBudget;
         Notes = notes;
         CreatedBy = createdBy;
-        // for (int i = 0; i < users.Count; i++)
-        // {
-        //     TripParticipants.Add(new TripParticipant(this, users[i], roles[i]));
-        // }
     }
-    // public ResultData<TripParticipant> AddUserToTrip(User user, RoleEnum role)
-    // {
-    //     if (TripParticipants.Any(u => u.UserId == user.Id))
-    //         return ResultData<TripParticipant>.Error("User already added to the trip.");
-
-    //     var participant = new TripParticipant(this, user, role);
-    //     TripParticipants.Add(participant);
-    //     return ResultData<TripParticipant>.Success(participant);
-    // }
-    // public ResultData<TripParticipant> RemoveUserFromTrip(User user)
-    // {
-    //     var tripParticipant = TripParticipants.FirstOrDefault(t => t.UserId == user.Id);
-    //     if (tripParticipant == null)
-    //         return ResultData<TripParticipant>.Error("User not found in this trip.");
-    //     TripParticipants.Remove(tripParticipant);
-    //     return ResultData<TripParticipant>.Success(tripParticipant);
-    // }
-    private ResultData<DateTime> ValidateDateStart(DateTime startDate)
+    public static ResultData<DateTime> ValidateDateStart(DateTime startDate)
     {
         if (startDate < DateTime.UtcNow)
             return ResultData<DateTime>.Error("Start date cannot be lass than the current date.");
         return ResultData<DateTime>.Success(startDate);
     }
-    private ResultData<DateTime> ValidateEndDate(DateTime endDate, DateTime dateStart)
+    public static ResultData<DateTime> ValidateEndDate(DateTime endDate, DateTime dateStart)
     {
         if (endDate < dateStart)
             return ResultData<DateTime>.Error("End date cannot be lass than the start date.");
         return ResultData<DateTime>.Success(endDate);
     }
-    private ResultData<decimal?> ValidateBudget(decimal? tripBudget)
+    public static ResultData<decimal?> ValidateBudget(decimal? tripBudget)
     {
         if (tripBudget < 0)
             return ResultData<decimal?>.Error("Budget cannot be lass than 0.");

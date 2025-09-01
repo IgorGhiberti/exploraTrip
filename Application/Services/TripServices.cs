@@ -1,5 +1,4 @@
 using Application.DTOs.TripDTOs;
-using Application.DTOs.UserDTOs;
 using Application.Interfaces;
 using Domain.DomainResults;
 using Domain.Entities;
@@ -22,6 +21,9 @@ internal class TripServices : ITripServices
     }
     public async Task<ResultData<ViewTripDto>> AddTrip(CreateTripDTO tripDto)
     {
+        var resultValidate = ValidateTripInfo(tripDto.Budget, tripDto.StartDate, tripDto.EndDate);
+        if (!resultValidate.IsSuccess)
+            return ResultData<ViewTripDto>.Error(resultValidate.Message);
         List<User> users = new List<User>();
         foreach (var userRole in tripDto.UserRoles)
         {
@@ -38,5 +40,22 @@ internal class TripServices : ITripServices
             await _tripParticipantRepository.AddTripParticipant(tripParticipant);
         }
         return ResultData<ViewTripDto>.Success(new ViewTripDto(trip.TripId, trip.Name, trip.DateStart, trip.DateEnd, tripDto.UserRoles));
+    }
+
+    private ResultData<string> ValidateTripInfo(decimal? budget, DateTime dateStart, DateTime dateEnd)
+    {
+        var resultBudget = Trip.ValidateBudget(budget);
+        if (!resultBudget.IsSuccess)
+            return ResultData<string>.Error(resultBudget.Message);
+
+        var resultDateStart = Trip.ValidateDateStart(dateStart);
+        if (!resultDateStart.IsSuccess)
+            return ResultData<string>.Error(resultDateStart.Message);
+
+        var resultDateEnd = Trip.ValidateEndDate(dateEnd, dateStart);
+        if (!resultDateEnd.IsSuccess)
+            return ResultData<string>.Error(resultDateEnd.Message);
+
+        return ResultData<string>.Success(string.Empty);
     }
 }

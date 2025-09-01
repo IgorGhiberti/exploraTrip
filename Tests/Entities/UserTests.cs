@@ -5,6 +5,7 @@ using Domain.ValueObjects;
 
 namespace Tests.Entities
 {
+    [Trait("Entities", "User")]
     public sealed class UserTests
     {
         private readonly Faker _faker = new("pt_BR");
@@ -16,6 +17,7 @@ namespace Tests.Entities
         }
 
         [Fact]
+        [Trait("Constructor", "")]
         public void Constructor_GivenAllParameters_ThenShouldSetThePropertiesCorrectly()
         {
             //Arrange
@@ -31,8 +33,9 @@ namespace Tests.Entities
             Assert.Equal(expectedHashPassword, user.HashPassword);
             Assert.Equal(expectedUserName, user.UserName);
             Assert.Equal(expectedActive, user.Active);
-        }
+        }   
 
+        [Trait("Method", "Update")]
         [Fact]
         public void UpdateUserMethod_GivenSomeParameter_ThenShouldSetThePropertieCorrectly()
         {
@@ -50,6 +53,7 @@ namespace Tests.Entities
             Assert.Equal(_user.UserName, _user.UserName);
         }
 
+        [Trait("Method", "ActiveUser")]
         [Fact]
         public void ActiveUserMethod_GivenAnyUserActiveParameter_ThenShouldSetActiveEqualsTrue()
         {
@@ -58,6 +62,7 @@ namespace Tests.Entities
             Assert.True(_user.Active);
         }
 
+        [Trait("Method", "DisableUser")]
         [Fact]
         public void DisableUserMethod_GivenAnyUserActiveParameter_ThenShouldSetActiveEqualsFalse()
         {
@@ -66,6 +71,7 @@ namespace Tests.Entities
             Assert.False(_user.Active);
         }
 
+        [Trait("Method", "UpdateHashPassword")]
         [Fact]
         public void UpdateHashPasswordMethod_GivenAnyStringParameter_ThenShouldSetTheNewHashPassword()
         {
@@ -75,6 +81,8 @@ namespace Tests.Entities
             Assert.Equal(expectedHash, _user.HashPassword);
         }
 
+        [Trait("VO", "Email")]
+        [Trait("Method", "Create")]
         [Fact]
         public void EmailCreateMethod_GivenValidEmail_ShouldReturnSuccessResultWithCorrectValue()
         {
@@ -87,6 +95,8 @@ namespace Tests.Entities
             Assert.Equal(expectedEmailVal, result.Data!.Value);
         }
 
+        [Trait("VO", "Email")]
+        [Trait("Method", "Create")]
         [Fact]
         public void EmailCreateMethod_GivenInvalidEmail_ShouldReturnNotSuccessResultWithErrorMessage()
         {
