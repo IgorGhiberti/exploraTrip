@@ -7,7 +7,8 @@ public interface ITripRepository
 {
     Task AddTrip(Trip trip);
     Task<List<Trip>> GetAllTrips();
-    Task<TripModel?> GetTripById(Guid id);
+    Task<TripModel?> GetTripModelById(Guid id);
     Task UpdateTrip(Trip trip);
     Task DeleteTrip(Trip trip);
+    Task<Trip?> GetTripById(Guid id);
 }

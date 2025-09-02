@@ -31,7 +31,7 @@ internal class TripRepository : ITripRepository
         return await _context.Trips.ToListAsync();
     }
 
-    public async Task<TripModel?> GetTripById(Guid id)
+    public async Task<TripModel?> GetTripModelById(Guid id)
     {
         var tripResult = await (from tp in _context.TripParticipants
                                 join t in _context.Trips on tp.TripId equals id
@@ -58,5 +58,9 @@ internal class TripRepository : ITripRepository
     {
         _context.Update(trip);
         await _context.SaveChangesAsync();
+    }
+    public async Task<Trip?> GetTripById(Guid id)
+    {
+        return await _context.Trips.SingleOrDefaultAsync(t => t.TripId == id);
     }
 }

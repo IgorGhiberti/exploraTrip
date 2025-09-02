@@ -7,7 +7,9 @@ public static class SendEmailHelper
 {
     public static void SendEmail(string userEmail, string body, string subject)
     {
-        using (SmtpClient smtp = new SmtpClient())
+        try
+        {
+            using (SmtpClient smtp = new SmtpClient())
         {
             smtp.Host = "smtp.gmail.com";
             smtp.Port = 587;
@@ -22,8 +24,13 @@ public static class SendEmailHelper
                 msg.Body = body;
                 smtp.Send(msg);
             }
-            
         }
+        }
+        catch (System.Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
+        
     }
 }
 

@@ -37,7 +37,7 @@ namespace WebApi.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns>Trip</returns>
-        /// /// <response code="201">Created</response>
+        /// /// <response code="200">Ok</response>
         /// <response code="404">NotFound</response>
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -48,6 +48,34 @@ namespace WebApi.Controllers
             if (!result.IsSuccess)
                 return result.ToNotFoundResult();
             return result.ToOkResult();
+        }
+
+        /// <summary>
+        /// Update the current trip
+        /// </summary>
+        /// <param name="id">Trip id</param>
+        /// <param name="tripDto">Trip update body</param>
+        /// <returns>Trip</returns>
+        /// /// <response code="20">Ok</response>
+        /// <response code="400">BadRequest</response>
+        [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> UpdateTrip(Guid id, UpdateTripDTO tripDto)
+        {
+            var result = await _tripServices.UpdateTrip(id, tripDto);
+            if (!result.IsSuccess)
+                return result.ToBadRequestResult();
+            return result.ToOkResult();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteTrip(Guid id)
+        {
+            var result = await _tripServices.DeleteTrip(id);
+            if (!result.IsSuccess)
+                return result.ToNotFoundResult();
+            return result.ToNoContentResult();
         }
     }
 }

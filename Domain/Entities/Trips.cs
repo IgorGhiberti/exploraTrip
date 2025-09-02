@@ -20,7 +20,7 @@ public class Trip : BaseEntity
     public static ResultData<DateTime> ValidateDateStart(DateTime startDate)
     {
         if (startDate < DateTime.UtcNow)
-            return ResultData<DateTime>.Error("Start date cannot be lass than the current date.");
+                return ResultData<DateTime>.Error("Start date cannot be lass than the current date.");
         return ResultData<DateTime>.Success(startDate);
     }
     public static ResultData<DateTime> ValidateEndDate(DateTime endDate, DateTime dateStart)
@@ -35,11 +35,29 @@ public class Trip : BaseEntity
             return ResultData<decimal?>.Error("Budget cannot be lass than 0.");
         return ResultData<decimal?>.Success(tripBudget);
     }
+    public void UpdateTrip(string? name, DateTime? starDate, DateTime? endDate, decimal? tripBudget, string[]? notes)
+    {
+        if (!string.IsNullOrEmpty(name))
+            Name = name;
+
+        if (starDate.HasValue)
+            DateStart = (DateTime)starDate;
+
+        if (endDate.HasValue)
+            DateEnd = (DateTime)endDate;
+
+        if (tripBudget.HasValue)
+            TripBudget = tripBudget;
+
+        if (notes != null)
+            Notes = notes;
+        
+    }
     //Pro entity
     private Trip() { }
     public Guid TripId { get; init; }
     public string Name { get; private set; } = string.Empty;
-    public DateTime DateStart { get; init; } = DateTime.UtcNow;
+    public DateTime DateStart { get; private set; }
     public DateTime DateEnd { get; private set; }
     public decimal? TripBudget { get; private set; }
     public ICollection<Local>? Locals { get; private set; }

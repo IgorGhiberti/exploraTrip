@@ -12,6 +12,10 @@ public static class ResultExtensions
     {
         return new CreatedResult(path, data);
     }
+    public static IActionResult ToNoContentResult<T>(this ResultData<T> _)
+    {
+        return new NoContentResult();
+    }
     //Esse resultado genérico quando a API precisa retornar um único dado, que no caso de ser nulo, já retorna o NotFound.
     public static IActionResult ToSingleResult<T>(this ResultData<T> result)
     {
