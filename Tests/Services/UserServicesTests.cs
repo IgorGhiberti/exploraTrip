@@ -82,7 +82,7 @@ namespace Tests.Services
 
         [Trait("Method", "Authenticate")]
         [Fact]
-        public async Task GivenTheWrongCredentials_ThenShouldReturnAErrorMessage()
+        public async Task GivenTheWrongCredentials_ThenShouldReturnAnErrorMessage()
         {
             string expectedAnswer = "Authentication failed.";
             string email = _faker.Person.Email;
@@ -103,7 +103,7 @@ namespace Tests.Services
 
         [Trait("Method", "GetUserByEmail")]
         [Fact]
-        public async Task GivenAnEmailThatDoesNotExist_ThenShouldReturnAErrorMessage()
+        public async Task GivenAnEmailThatDoesNotExist_ThenShouldReturnAnErrorMessage()
         {
             string expectedResult = "Email not registered in the system.";
             string emailUser = _faker.Person.Email;
@@ -120,7 +120,7 @@ namespace Tests.Services
 
         [Trait("Method", "GetUserById")]
         [Fact]
-        public async Task GivenAIdThatExistInTheDatabase_ThenShouldReturnAUser()
+        public async Task GivenAnIdThatExistsInTheDatabase_ThenShouldReturnAUser()
         {
             var user = new User(_faker.Person.Email, _faker.Person.FullName, _faker.Lorem.Text(), _faker.Person.Email, _faker.Random.Bool());
             _userRepositoryMock.Setup(repo => repo.GetUserById(user.Id)).ReturnsAsync(user);
@@ -136,7 +136,7 @@ namespace Tests.Services
 
         [Trait("Method", "GetUserById")]
         [Fact]
-        public async Task GivenAIdThatDoesNotExist_ThenShouldReturnAExpectedErrorMessage()
+        public async Task GivenAnIdThatDoesNotExist_ThenShouldReturnAnExpectedErrorMessage()
         {
             string expectedMessage = "User does not exist.";
             var user = new User(_faker.Person.Email, _faker.Person.FullName, _faker.Lorem.Text(), _faker.Person.Email, _faker.Random.Bool());

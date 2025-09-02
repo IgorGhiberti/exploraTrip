@@ -201,7 +201,7 @@ namespace WebApi.Controllers
         /// Reset user password.
         /// </summary>
         /// <param name="userDto">User body</param>
-        /// <returns>If the operation was succeful</returns>
+        /// <returns>If the operation was successful</returns>
         /// <response code="200">Ok</response>
         /// <response code="400">BadRequest</response>
         [HttpPut("resetPassword")]

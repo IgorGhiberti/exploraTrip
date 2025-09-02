@@ -34,7 +34,8 @@ internal class TripRepository : ITripRepository
     public async Task<TripModel?> GetTripModelById(Guid id)
     {
         var tripResult = await (from tp in _context.TripParticipants
-                                join t in _context.Trips on tp.TripId equals id
+                                join t in _context.Trips on tp.TripId equals t.TripId
+                                where t.TripId == id
                                 join u in _context.Users on tp.UserId equals u.Id
                                 select new TripModel
                                 {

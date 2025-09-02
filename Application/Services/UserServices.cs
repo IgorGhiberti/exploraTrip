@@ -180,13 +180,13 @@ internal class UserServices : IUserServices
         // Salva em cache o randomCode
         _cache.StoreRandomNumber(randomCode);
 
-        return ResultData<string>.Success("Confirmation code sent succefully!");
+        return ResultData<string>.Success("Confirmation code sent successfully!");
     }
     public async Task<ResultData<ViewUserDTO>> ResetPassword(UpdatePasswordDTO userDto)
     {
         string? userEmail = _cache.GetUserEmail();
         if (userEmail == null)
-            return ResultData<ViewUserDTO>.Error("Invalid of expired code.");
+            return ResultData<ViewUserDTO>.Error("Invalid or expired code.");
         var user = await GetUserByEmail(userEmail);
         if (!user.IsSuccess)
             return ResultData<ViewUserDTO>.Error(user.Message);

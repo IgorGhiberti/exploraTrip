@@ -20,19 +20,19 @@ public class Trip : BaseEntity
     public static ResultData<DateTime> ValidateDateStart(DateTime startDate)
     {
         if (startDate < DateTime.UtcNow)
-                return ResultData<DateTime>.Error("Start date cannot be lass than the current date.");
+                return ResultData<DateTime>.Error("Start date cannot be less than the current date.");
         return ResultData<DateTime>.Success(startDate);
     }
     public static ResultData<DateTime> ValidateEndDate(DateTime endDate, DateTime dateStart)
     {
         if (endDate < dateStart)
-            return ResultData<DateTime>.Error("End date cannot be lass than the start date.");
+            return ResultData<DateTime>.Error("End date cannot be less than the start date.");
         return ResultData<DateTime>.Success(endDate);
     }
     public static ResultData<decimal?> ValidateBudget(decimal? tripBudget)
     {
         if (tripBudget < 0)
-            return ResultData<decimal?>.Error("Budget cannot be lass than 0.");
+            return ResultData<decimal?>.Error("Budget cannot be less than 0.");
         return ResultData<decimal?>.Success(tripBudget);
     }
     public void UpdateTrip(string? name, DateTime? starDate, DateTime? endDate, decimal? tripBudget, string[]? notes)

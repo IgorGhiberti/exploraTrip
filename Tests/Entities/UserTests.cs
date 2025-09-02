@@ -37,7 +37,7 @@ namespace Tests.Entities
 
         [Trait("Method", "Update")]
         [Fact]
-        public void UpdateUserMethod_GivenSomeParameter_ThenShouldSetThePropertieCorrectly()
+        public void UpdateUserMethod_GivenSomeParameter_ThenShouldSetThePropertiesCorrectly()
         {
             string? expectedEmail = _faker.Person.Email.OrNull(_faker, 0.3f);
             string? expectedUserName = _faker.Person.FullName.OrNull(_faker, 0.1f);
@@ -98,7 +98,7 @@ namespace Tests.Entities
         [Trait("VO", "Email")]
         [Trait("Method", "Create")]
         [Fact]
-        public void EmailCreateMethod_GivenInvalidEmail_ShouldReturnNotSuccessResultWithErrorMessage()
+        public void EmailCreateMethod_GivenInvalidEmail_ShouldReturnUnsuccessfulResultWithErrorMessage()
         {
             string expectedIncorrectEmail = _faker.Person.FullName;
             string expectedMessage = "Invalid email format.";
