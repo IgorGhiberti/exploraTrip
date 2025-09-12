@@ -69,6 +69,11 @@ namespace WebApi.Controllers
             return result.ToOkResult();
         }
 
+        /// <summary>
+        /// Delete a trip.
+        /// </summary>
+        /// <param name="id">Trip id</param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTrip(Guid id)
         {

@@ -19,19 +19,12 @@ public class LocalConfiguration : BaseEntityConfiguration<Local>
             .HasMaxLength(255)
             .IsRequired();
 
-        builder.Property(l => l.DateStart)
-            .IsRequired();
+        builder.Property(l => l.DateStart);
 
-        builder.Property(l => l.DateEnd)
-            .IsRequired();
+        builder.Property(l => l.DateEnd);
 
         builder.Property(l => l.Notes);
 
         builder.Property(l => l.LocalBudget);
-
-        builder.HasMany(l => l.Activities)
-            .WithOne(a => a.Local)
-            .HasForeignKey(a => a.LocalId)
-            .OnDelete(DeleteBehavior.NoAction);
     }
 }

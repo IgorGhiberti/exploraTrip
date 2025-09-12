@@ -20,11 +20,9 @@ public class TripConfiguration : BaseEntityConfiguration<Trip>
 
         builder.Property(t => t.Notes);
 
-        builder.Property(t => t.DateStart)
-            .IsRequired();
+        builder.Property(t => t.DateStart);
 
-        builder.Property(t => t.DateEnd)
-            .IsRequired();
+        builder.Property(t => t.DateEnd);
 
         builder.Property(t => t.TripBudget);
 

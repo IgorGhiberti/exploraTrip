@@ -26,6 +26,7 @@ internal class UserServices : IUserServices
     {
         List<User> users = await _userRepository.GetAll();
         var result = from u in users
+                     where u.Active
                      select new ViewUserDTO(u.Id, u.UserName, u.Email!.Value, u.Active);
         return ResultData<List<ViewUserDTO>>.Success(result.ToList());
     }
@@ -41,24 +42,22 @@ internal class UserServices : IUserServices
 
     public async Task<ResultData<ViewUserDTO>> GetUserById(Guid id)
     {
-        var user = await GetUserRepoById(id);
+        var user = await GetUserFromRepoById(id);
         if (!user.IsSuccess)
             return ResultData<ViewUserDTO>.Error(user.Message);
         return ResultData<ViewUserDTO>.Success(new ViewUserDTO(user.Data!.Id, user.Data!.UserName, user.Data.Email!.Value, user.Data.Active));
     }
-    public async Task<ResultData<User>> GetUserRepoById(Guid id)
+    public async Task<ResultData<User>> GetUserFromRepoById(Guid id)
     {
         User? user = await _userRepository.GetUserById(id);
-        if (user == null)
-        {
-            return ResultData<User>.Error("User does not exist.");
-        }
-        return ResultData<User>.Success(user);
+        var userValidation = UserPolicyResult.IsUserNullOrDisable(user);
+        if (!userValidation.IsSuccess)
+            return ResultData<User>.Error(userValidation.Message);
+        return ResultData<User>.Success(user!);
     }
-
     public async Task<ResultData<ViewUserDTO>> ActiveUser(Guid id)
     {
-        var user = await GetUserRepoById(id);
+        var user = await GetUserFromRepoById(id);
         if (!user.IsSuccess)
             return ResultData<ViewUserDTO>.Error(user.Message);
         user.Data!.ActivateUser();
@@ -68,7 +67,7 @@ internal class UserServices : IUserServices
     }
     public async Task<ResultData<ViewUserDTO>> DisableUser(Guid id)
     {
-        var user = await GetUserRepoById(id);
+        var user = await GetUserFromRepoById(id);
         if (!user.IsSuccess)
             return ResultData<ViewUserDTO>.Error(user.Message);
         user.Data!.DisableUser();
@@ -78,7 +77,7 @@ internal class UserServices : IUserServices
     }
     public async Task<ResultData<bool>> IsUserActive(Guid id)
     {
-        var user = await GetUserRepoById(id);
+        var user = await GetUserFromRepoById(id);
         if (!user.IsSuccess)
             return ResultData<bool>.Error(user.Message);
         return ResultData<bool>.Success(user.Data!.Active);
@@ -111,14 +110,15 @@ internal class UserServices : IUserServices
     public async Task<ResultData<User>> GetUserByEmail(string email)
     {
         var user = await _userRepository.GetUserByEmail(email);
-        if (user == null)
-            return ResultData<User>.Error("Email not registered in the system.");
-        return ResultData<User>.Success(user);
+        var userPolicyResult = UserPolicyResult.IsUserNullOrDisable(user);
+        if (!userPolicyResult.IsSuccess)
+            return ResultData<User>.Error(userPolicyResult.Message);
+        return ResultData<User>.Success(user!);
     }
 
     public async Task<ResultData<ViewUserDTO>> UpdateUser(Guid id, UpdateUserDTO userDto, CancellationToken cancellationToken)
     {
-        var user = await GetUserRepoById(id);
+        var user = await GetUserFromRepoById(id);
         if (!user.IsSuccess)
             return ResultData<ViewUserDTO>.Error(user.Message);
 
@@ -129,7 +129,7 @@ internal class UserServices : IUserServices
     }
     public async Task<ResultData<string>> UpdatePassword(Guid id, UpdatePasswordDTO userDto, CancellationToken cancellationToken)
     {
-        var user = await GetUserRepoById(id);
+        var user = await GetUserFromRepoById(id);
         if (!user.IsSuccess)
             return ResultData<string>.Error(user.Message);
 

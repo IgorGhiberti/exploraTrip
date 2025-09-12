@@ -24,14 +24,6 @@ internal class TripServices : ITripServices
     }
     public async Task<ResultData<ViewTripDto>> AddTrip(CreateTripDTO tripDto)
     {
-        var resultValidateB = ValidateTripBudgetInfo(tripDto.Budget);
-        if (!resultValidateB.IsSuccess)
-            return ResultData<ViewTripDto>.Error(resultValidateB.Message);
-
-        var resultValidateDate = ValidateTripDateInfo(tripDto.StartDate, tripDto.EndDate);
-        if (!resultValidateDate.IsSuccess)
-            return ResultData<ViewTripDto>.Error(resultValidateDate.Message);
-
         List<User> users = new List<User>();
         foreach (var userRole in tripDto.UserRoles)
         {
@@ -40,40 +32,29 @@ internal class TripServices : ITripServices
                 return ResultData<ViewTripDto>.Error("User not found.");
             users.Add(user);
         }
-        var trip = new Trip(tripDto.Name, tripDto.StartDate.ToUniversalTime(), tripDto.EndDate.ToUniversalTime(), users[0].Email!.Value, tripDto.Budget, tripDto.Notes);
-        await _tripRepository.AddTrip(trip);
+
+        var trip = Trip.CreateTrip(tripDto.Name, tripDto.StartDate?.ToUniversalTime(), tripDto.EndDate?.ToUniversalTime(), users[0].Email!.Value, tripDto.Budget, tripDto.Notes);
+        if (!trip.IsSuccess)
+            return ResultData<ViewTripDto>.Error(trip.Message);
+        await _tripRepository.AddTrip(trip.Data!);
         for (int i = 0; i < users.Count; i++)
         {
-            var tripParticipant = new TripParticipant(trip, users[i], tripDto.UserRoles[i].Role);
+            await AddTripParticipant(trip.Data!, users[i], tripDto.UserRoles[i].Role);
+
+            //Envia e-mail aos convidados
             if (tripDto.UserRoles[i].Role != RoleEnum.Owner)
             {
                 string subject = "Você agora participa de uma nova viagem!";
                 string bodyParticipant = $"Olá {users[i].UserName}!\nAgora você também tem acesso a viagem {tripDto.Name}, boa exploração :)";
                 SendEmailHelper.SendEmail(users[i].Email!.Value, bodyParticipant, subject);
             }
-            await _tripParticipantRepository.AddTripParticipant(tripParticipant);
         }
-        return ResultData<ViewTripDto>.Success(new ViewTripDto(trip.TripId, trip.Name, trip.DateStart, trip.DateEnd, tripDto.UserRoles));
+        return ResultData<ViewTripDto>.Success(new ViewTripDto(trip.Data!.TripId, trip.Data!.Name, trip.Data!.DateStart, trip.Data!.DateEnd, tripDto.UserRoles));
     }
-    private ResultData<string> ValidateTripBudgetInfo(decimal? budget)
+    private async Task AddTripParticipant(Trip trip, User user, RoleEnum role)
     {
-        var resultBudget = Trip.ValidateBudget(budget);
-        if (!resultBudget.IsSuccess)
-            return ResultData<string>.Error(resultBudget.Message);
-
-        return ResultData<string>.Success(string.Empty);
-    }
-    private ResultData<string> ValidateTripDateInfo(DateTime dateStart, DateTime dateEnd)
-    {
-        var resultDateStart = Trip.ValidateDateStart(dateStart);
-        if (!resultDateStart.IsSuccess)
-            return ResultData<string>.Error(resultDateStart.Message);
-
-        var resultDateEnd = Trip.ValidateEndDate(dateEnd, dateStart);
-        if (!resultDateEnd.IsSuccess)
-            return ResultData<string>.Error(resultDateEnd.Message);
-
-        return ResultData<string>.Success(string.Empty);
+        TripParticipant tripParticipant = new TripParticipant(trip, user, role);
+        await _tripParticipantRepository.AddTripParticipant(tripParticipant);
     }
     public async Task<ResultData<ViewTripDto>> GetTripById(Guid id)
     {
@@ -86,40 +67,29 @@ internal class TripServices : ITripServices
     }
     public async Task<ResultData<ViewTripDto>> UpdateTrip(Guid id, UpdateTripDTO tripDto)
     {
-        if (tripDto.startDate.HasValue && tripDto.endDate.HasValue)
-        {
-            var resultValidateDate = ValidateTripDateInfo((DateTime)tripDto.startDate, (DateTime)tripDto.endDate);
-            if (!resultValidateDate.IsSuccess)
-                return ResultData<ViewTripDto>.Error(resultValidateDate.Message);
-        }
+        var trip = await GetTripFromRepoById(id);
 
-        if (tripDto.TripBudget.HasValue)
-        {
-            var resultValidateBudget = ValidateTripBudgetInfo(tripDto.TripBudget);
-            if (!resultValidateBudget.IsSuccess)
-                return ResultData<ViewTripDto>.Error(resultValidateBudget.Message);
-        }
+        if (!trip.IsSuccess)
+            return ResultData<ViewTripDto>.Error(trip.Message);
 
-        var trip = await _tripRepository.GetTripById(id);
+        var resultUpdate = trip.Data!.UpdateTrip(tripDto.TripName, tripDto.startDate, tripDto.endDate, tripDto.TripBudget, tripDto.Notes);
 
-        if (trip == null)
-            return ResultData<ViewTripDto>.Error("This trip does not exist.");
+        if (!resultUpdate.IsSuccess)
+            return ResultData<ViewTripDto>.Error(resultUpdate.Message);
+            
+        await _tripRepository.UpdateTrip(trip.Data);
 
-        trip.UpdateTrip(tripDto.TripName, tripDto.startDate, tripDto.endDate, tripDto.TripBudget, tripDto.Notes);
-
-        await _tripRepository.UpdateTrip(trip);
-
-        return ResultData<ViewTripDto>.Success(new ViewTripDto(trip.TripId, trip.Name, trip.DateStart, trip.DateEnd, null));
+        return ResultData<ViewTripDto>.Success(new ViewTripDto(trip.Data.TripId, trip.Data.Name, trip.Data.DateStart, trip.Data.DateEnd, null));
     }
 
     public async Task<ResultData<string>> DeleteTrip(Guid id)
     {
-        var trip = await _tripRepository.GetTripById(id);
+        var trip = await GetTripFromRepoById(id);
 
-        if (trip == null)
-            return ResultData<string>.Error("This trip does not exist.");
+        if (!trip.IsSuccess)
+            return ResultData<string>.Error(trip.Message);
 
-        await _tripRepository.DeleteTrip(trip);
+        await _tripRepository.DeleteTrip(trip.Data!);
 
         List<TripParticipant> tripParticipants = await _tripParticipantRepository.GetTripParticipantsByTripId(id);
 
@@ -128,5 +98,14 @@ internal class TripServices : ITripServices
             await _tripParticipantRepository.DeleteTripParticipant(tripParticipant);
         }
         return ResultData<string>.Success(string.Empty);
+    }
+    public async Task<ResultData<Trip>> GetTripFromRepoById(Guid id)
+    {
+        var trip = await _tripRepository.GetTripById(id);
+
+        if (trip == null)
+            return ResultData<Trip>.Error("This trip does not exist.");
+
+        return ResultData<Trip>.Success(trip);
     }
 }

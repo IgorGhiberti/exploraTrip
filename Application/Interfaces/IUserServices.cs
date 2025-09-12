@@ -10,7 +10,7 @@ public interface IUserServices
     Task<ResultData<List<ViewUserDTO>>> GetAll();
     Task<ResultData<string>> AuthenticateUser(LoginUserDTO userDto);
     Task<ResultData<ViewUserDTO>> GetUserById(Guid id);
-    Task<ResultData<User>> GetUserRepoById(Guid id);
+    Task<ResultData<User>> GetUserFromRepoById(Guid id);
     Task<ResultData<ViewUserDTO>> ActiveUser(Guid id);
     Task<ResultData<ViewUserDTO>> DisableUser(Guid id);
     Task<ResultData<bool>> IsUserActive(Guid id);

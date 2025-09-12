@@ -52,11 +52,11 @@ namespace Tests.Services
             Assert.NotNull(result.Data);
             Assert.All(result.Data, dto =>
             {
-                var originalUser = usersList.FirstOrDefault(u => u.Id == dto.Id);
-                Assert.Equal(originalUser!.Id, dto.Id);
-                Assert.Equal(originalUser!.UserName, dto.UserName);
-                Assert.Equal(originalUser.Email!.Value, dto.Email);
-                Assert.Equal(originalUser.Active, dto.IsActive);
+                var expectedUser = usersList.FirstOrDefault(u => u.Id == dto.Id);
+                Assert.Equal(expectedUser!.Id, dto.Id);
+                Assert.Equal(expectedUser!.UserName, dto.UserName);
+                Assert.Equal(expectedUser.Email!.Value, dto.Email);
+                Assert.Equal(expectedUser.Active, dto.IsActive);
             });
         }
 
@@ -77,7 +77,7 @@ namespace Tests.Services
 
             Assert.True(result.IsSuccess);
             Assert.NotNull(result.Data);
-            Assert.Equal(result.Data, expectedAnswer);
+            Assert.Equal(expectedAnswer, result.Data);
         }
 
         [Trait("Method", "Authenticate")]
@@ -97,7 +97,7 @@ namespace Tests.Services
 
             Assert.False(result.IsSuccess);
             Assert.Null(result.Data);
-            Assert.Equal(result.Message, expectedAnswer);
+            Assert.Equal(expectedAnswer, result.Message);
         }
 
 
@@ -115,7 +115,7 @@ namespace Tests.Services
 
             Assert.False(result.IsSuccess);
             Assert.Null(result.Data);
-            Assert.Equal(result.Message, expectedResult);
+            Assert.Equal(expectedResult, result.Message);
         }
 
         [Trait("Method", "GetUserById")]
@@ -131,7 +131,7 @@ namespace Tests.Services
 
             Assert.True(result.IsSuccess);
             Assert.NotNull(result.Data);
-            Assert.Equal(result.Data, expectedViewDTO);
+            Assert.Equal(expectedViewDTO, result.Data);
         }
 
         [Trait("Method", "GetUserById")]
@@ -146,7 +146,129 @@ namespace Tests.Services
 
             Assert.False(result.IsSuccess);
             Assert.Null(result.Data);
-            Assert.Equal(result.Message, expectedMessage);
+            Assert.Equal(expectedMessage, result.Message);
+        }
+
+        [Trait("Method", "ActiveUser")]
+        [Fact]
+        public async Task GivenAnIdThatExists_ThenShouldReturnAnUserWithActiveEqualsTrue()
+        {
+            var user = new User(_faker.Person.Email, _faker.Person.FullName, _faker.Lorem.Text(), _faker.Person.Email, _faker.Random.Bool());
+            _userRepositoryMock.Setup(repo => repo.GetUserById(user.Id)).ReturnsAsync(user);
+
+            var result = await _userServices.ActiveUser(user.Id);
+
+            ViewUserDTO expectedViewDTO = new ViewUserDTO(user.Id, user.UserName, user.Email!.Value, true);
+
+            Assert.True(result.IsSuccess);
+            Assert.NotNull(result.Data);
+            Assert.Equal(expectedViewDTO, result.Data);
+        }
+
+        [Trait("Method", "ActiveUser")]
+        [Fact]
+        public async Task GivenAnIdThatDoesNotExist_ThenShouldReturnAnErrorMessage()
+        {
+            string expectedMessage = "User does not exist.";
+            var user = new User(_faker.Person.Email, _faker.Person.FullName, _faker.Lorem.Text(), _faker.Person.Email, _faker.Random.Bool());
+            _userRepositoryMock.Setup(repo => repo.GetUserById(user.Id)).ReturnsAsync((User?)null);
+
+            var result = await _userServices.ActiveUser(user.Id);
+
+            Assert.False(result.IsSuccess);
+            Assert.Null(result.Data);
+            Assert.Equal(expectedMessage, result.Message);
+        }
+
+        [Trait("Method", "DisableUser")]
+        [Fact]
+        public async Task GivenAnIdThatExists_ThenShouldReturnUserWithActiveEqualsFalse()
+        {
+            var user = new User(_faker.Person.Email, _faker.Person.FullName, _faker.Lorem.Text(), _faker.Person.Email, _faker.Random.Bool());
+            _userRepositoryMock.Setup(repo => repo.GetUserById(user.Id)).ReturnsAsync(user);
+
+            var result = await _userServices.DisableUser(user.Id);
+
+            ViewUserDTO expectedViewDTO = new ViewUserDTO(user.Id, user.UserName, user.Email!.Value, false);
+
+            Assert.True(result.IsSuccess);
+            Assert.NotNull(result.Data);
+            Assert.Equal(expectedViewDTO, result.Data);
+        }
+
+        [Trait("Method", "DisableUser")]
+        [Fact]
+        public async Task GivenAnIdThatDoesNotExistInDisable_ThenShouldReturnAnErrorMessage()
+        {
+            string expectedMessage = "User does not exist.";
+            var user = new User(_faker.Person.Email, _faker.Person.FullName, _faker.Lorem.Text(), _faker.Person.Email, _faker.Random.Bool());
+            _userRepositoryMock.Setup(repo => repo.GetUserById(user.Id)).ReturnsAsync((User?)null);
+
+            var result = await _userServices.DisableUser(user.Id);
+
+            Assert.False(result.IsSuccess);
+            Assert.Null(result.Data);
+            Assert.Equal(expectedMessage, result.Message);
+        }
+
+        [Trait("Method", "IsUserActive")]
+        [Fact]
+        public async Task GivenAnIdThatExists_ThenShouldReturnUserActiveStatus()
+        {
+            var user = new User(_faker.Person.Email, _faker.Person.FullName, _faker.Lorem.Text(), _faker.Person.Email, _faker.Random.Bool());
+            _userRepositoryMock.Setup(repo => repo.GetUserById(user.Id)).ReturnsAsync(user);
+            bool expectedResult = user.Active;
+
+            var result = await _userServices.IsUserActive(user.Id);
+
+            Assert.True(result.IsSuccess);
+            Assert.Equal(expectedResult, result.Data);
+        }
+
+        [Trait("Method", "IsUserActive")]
+        [Fact]
+        public async Task GivenAnIdThatDoesNotExistIsUserActive_ThenShouldReturnAnErrorMessage()
+        {
+            string expectedMessage = "User does not exist.";
+            var user = new User(_faker.Person.Email, _faker.Person.FullName, _faker.Lorem.Text(), _faker.Person.Email, true);
+            _userRepositoryMock.Setup(repo => repo.GetUserById(user.Id)).ReturnsAsync((User?)null);
+
+            var result = await _userServices.IsUserActive(user.Id);
+
+            Assert.False(result.IsSuccess);
+            Assert.Equal(expectedMessage, result.Message);
+        }
+
+        [Trait("Method", "GetUserByEmail")]
+        [Fact]
+        public async Task GivenAnEmailThatExists_ThenShouldReturnUser()
+        {
+            var expectedUser = new User(_faker.Person.Email, _faker.Person.FullName, _faker.Lorem.Text(), _faker.Person.Email, _faker.Random.Bool());
+            _userRepositoryMock.Setup(repo => repo.GetUserByEmail(expectedUser.Email!.Value)).ReturnsAsync(expectedUser);
+
+            var result = await _userServices.GetUserByEmail(expectedUser.Email!.Value);
+
+            Assert.True(result.IsSuccess);
+            Assert.NotNull(result.Data);
+            Assert.Equal(expectedUser.Id, result.Data.Id);
+            Assert.Equal(expectedUser.UserName, result.Data.UserName);
+            Assert.Equal(expectedUser.Email, result.Data.Email);
+            Assert.Equal(expectedUser.Active, result.Data.Active);
+        }
+
+        [Trait("Method", "GetUserByEmail")]
+        [Fact]
+        public async Task GivenAnEmailThatDoesNotExist_ThenShouldReturnError()
+        {
+            string email = _faker.Person.Email;
+            string expectedMessage = "Email not registered in the system.";
+            _userRepositoryMock.Setup(repo => repo.GetUserByEmail(email)).ReturnsAsync((User?)null);
+
+            var result = await _userServices.GetUserByEmail(email);
+
+            Assert.False(result.IsSuccess);
+            Assert.Null(result.Data);
+            Assert.Equal(expectedMessage, result.Message);
         }
     }
 }
