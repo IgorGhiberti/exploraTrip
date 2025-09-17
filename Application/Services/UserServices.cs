@@ -151,12 +151,12 @@ internal class UserServices : IUserServices
     {
         int? codeByCache = _cache.GetRandomNumber();
         bool equalCode = codeByCache == code;
-        var user = await GetUserByEmail(userEmail);
-        if (!user.IsSuccess)
-            return ResultData<bool>.Error(user.Message);
+        var user = await _userRepository.GetUserByEmail(userEmail);
+        if (user == null)
+            return ResultData<bool>.Error("User not found.");
         if (equalCode && operationEnum == OperationEnum.ActiveOperation)
         {
-            await ActiveUser(user.Data!.Id);
+            await ActiveUser(user.Id);
             return ResultData<bool>.Success(true);
         }
         if (equalCode && operationEnum == OperationEnum.UpdateOperation)
