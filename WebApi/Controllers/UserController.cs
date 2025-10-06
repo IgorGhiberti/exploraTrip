@@ -212,5 +212,21 @@ namespace WebApi.Controllers
                 return result.ToBadRequestResult();
             return result.ToOkResult();
         }
+        
+        /// <summary>
+        /// Show user by email.
+        /// </summary>
+        /// <param name="email">User email</param>
+        /// <returns>If the operation was successful</returns>
+        /// <response code="200">Ok</response>
+        /// <response code="400">BadRequest</response>
+        [HttpGet("getUserByEmail/{email}")]
+        public async Task<IActionResult> GetUserByEmail(string email)
+        {
+            var result = await _userServices.ShowUserByEmail(email);
+            if (!result.IsSuccess)
+                return result.ToBadRequestResult();
+            return result.ToOkResult();
+        }
     }
 }

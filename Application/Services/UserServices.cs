@@ -47,6 +47,14 @@ internal class UserServices : IUserServices
             return ResultData<ViewUserDTO>.Error(user.Message);
         return ResultData<ViewUserDTO>.Success(new ViewUserDTO(user.Data!.Id, user.Data!.UserName, user.Data.Email!.Value, user.Data.Active));
     }
+
+    public async Task<ResultData<ViewUserDTO>> ShowUserByEmail(string email)
+    {
+        var user = await GetUserByEmail(email);
+        if (!user.IsSuccess)
+            return ResultData<ViewUserDTO>.Error(user.Message);
+        return ResultData<ViewUserDTO>.Success(new ViewUserDTO(user.Data!.Id, user.Data!.UserName, user.Data.Email!.Value, user.Data.Active));
+    }
     public async Task<ResultData<User>> GetUserFromRepoById(Guid id)
     {
         User? user = await _userRepository.GetUserById(id);
@@ -115,7 +123,7 @@ internal class UserServices : IUserServices
             return ResultData<User>.Error(userPolicyResult.Message);
         return ResultData<User>.Success(user!);
     }
-
+    
     public async Task<ResultData<ViewUserDTO>> UpdateUser(Guid id, UpdateUserDTO userDto, CancellationToken cancellationToken)
     {
         var user = await GetUserFromRepoById(id);
@@ -156,7 +164,8 @@ internal class UserServices : IUserServices
             return ResultData<bool>.Error("User not found.");
         if (equalCode && operationEnum == OperationEnum.ActiveOperation)
         {
-            await ActiveUser(user.Id);
+            user!.ActivateUser();
+            await _userRepository.UpdateUser(user);
             return ResultData<bool>.Success(true);
         }
         if (equalCode && operationEnum == OperationEnum.UpdateOperation)

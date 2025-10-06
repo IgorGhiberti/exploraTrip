@@ -18,7 +18,7 @@ public class Trip : BaseEntity
     }
     private static ResultData<DateTime?> ValidateDateStart(DateTime? startDate)
     {
-        if (startDate < DateTime.UtcNow)
+        if (startDate < DateTime.UtcNow.Date)
                 return ResultData<DateTime?>.Error("Start date cannot be less than the current date.");
         return ResultData<DateTime?>.Success(startDate);
     }

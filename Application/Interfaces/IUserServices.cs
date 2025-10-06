@@ -20,4 +20,5 @@ public interface IUserServices
     Task<ResultData<bool>> ConfirmEmailCode(string userEmail, int code, OperationEnum operationEnum);
     Task<ResultData<string>> ForgetPassword(string email);
     Task<ResultData<ViewUserDTO>> ResetPassword(UpdatePasswordDTO userDto);
+    Task<ResultData<ViewUserDTO>> ShowUserByEmail(string email);
 }
