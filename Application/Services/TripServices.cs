@@ -7,6 +7,7 @@ using Domain.Entities;
 using Domain.Enums;
 using Domain.Interfaces;
 using Domain.Intfaces;
+using Domain.Models;
 
 namespace Application.Services;
 
@@ -49,7 +50,7 @@ internal class TripServices : ITripServices
                 SendEmailHelper.SendEmail(users[i].Email!.Value, bodyParticipant, subject);
             }
         }
-        return ResultData<ViewTripDto>.Success(new ViewTripDto(trip.Data!.TripId, trip.Data!.Name, trip.Data!.DateStart, trip.Data!.DateEnd, tripDto.UserRoles));
+        return ResultData<ViewTripDto>.Success(new ViewTripDto(trip.Data!.TripId, trip.Data!.Name, trip.Data!.DateStart, trip.Data!.DateEnd, tripDto.UserRoles, null));
     }
     private async Task AddTripParticipant(Trip trip, User user, RoleEnum role)
     {
@@ -63,7 +64,7 @@ internal class TripServices : ITripServices
             return ResultData<ViewTripDto>.Error("Trip not found.");
         List<UserRoleDTO> usersRoleDto = (from tp in tripModel.TripParticipantModels
                                           select new UserRoleDTO(tp.UserEmail!.Value, tp.Role)).ToList();
-        return ResultData<ViewTripDto>.Success(new ViewTripDto(id, tripModel.TripName, tripModel.StartDate, tripModel.EndDate, usersRoleDto));
+        return ResultData<ViewTripDto>.Success(new ViewTripDto(id, tripModel.TripName, tripModel.StartDate, tripModel.EndDate, usersRoleDto, null));
     }
     public async Task<ResultData<ViewTripDto>> UpdateTrip(Guid id, UpdateTripDTO tripDto)
     {
@@ -79,7 +80,7 @@ internal class TripServices : ITripServices
             
         await _tripRepository.UpdateTrip(trip.Data);
 
-        return ResultData<ViewTripDto>.Success(new ViewTripDto(trip.Data.TripId, trip.Data.Name, trip.Data.DateStart, trip.Data.DateEnd, null));
+        return ResultData<ViewTripDto>.Success(new ViewTripDto(trip.Data.TripId, trip.Data.Name, trip.Data.DateStart, trip.Data.DateEnd, null, null));
     }
 
     public async Task<ResultData<string>> DeleteTrip(Guid id)
@@ -107,5 +108,22 @@ internal class TripServices : ITripServices
             return ResultData<Trip>.Error("This trip does not exist.");
 
         return ResultData<Trip>.Success(trip);
+    }
+
+    public async Task<ResultData<List<ViewTripDto>>> GetAllTripsByUserEmail(string email)
+    {
+        var trips = await _tripRepository.GetAllTripsByUserEmail(email);
+        
+        if (trips.Count == 0)
+            return ResultData<List<ViewTripDto>>.Error("No one trip for this user.");
+        
+        List<ViewTripDto> tripDtos = new List<ViewTripDto>();
+
+        foreach (var trip in trips)
+        {
+            tripDtos.Add(new ViewTripDto(null, trip.TripName, trip.StartDate, trip.EndDate, null, trip.TripBudget));
+        }
+
+        return ResultData<List<ViewTripDto>>.Success(tripDtos);
     }
 }

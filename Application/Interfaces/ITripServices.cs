@@ -10,4 +10,5 @@ public interface ITripServices
     Task<ResultData<ViewTripDto>> GetTripById(Guid id);
     Task<ResultData<ViewTripDto>> UpdateTrip(Guid id, UpdateTripDTO tripDto);
     Task<ResultData<string>> DeleteTrip(Guid id);
+    Task<ResultData<List<ViewTripDto>>> GetAllTripsByUserEmail(string email);
 }

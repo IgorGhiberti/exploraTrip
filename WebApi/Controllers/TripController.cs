@@ -82,5 +82,20 @@ namespace WebApi.Controllers
                 return result.ToNotFoundResult();
             return result.ToNoContentResult();
         }
+        
+        /// <summary>
+        /// Get all trips for user
+        /// </summary>
+        /// <param name="email">User e-mail</param>
+        /// <returns>All trips that the user has access.</returns>
+        [HttpGet("/userTrips/{email}")]
+        public async Task<IActionResult> GetAllTripsByUserEmail(string email)
+        {
+            var result = await _tripServices.GetAllTripsByUserEmail(email);
+            if (!result.IsSuccess)
+                return result.ToNotFoundResult();
+            return result.ToOkResult();
+        }
+        
     }
 }

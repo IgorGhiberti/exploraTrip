@@ -64,4 +64,20 @@ internal class TripRepository : ITripRepository
     {
         return await _context.Trips.SingleOrDefaultAsync(t => t.TripId == id);
     }
+
+    public async Task<List<TripModel?>> GetAllTripsByUserEmail(string email)
+    {
+        var emailResult = Email.Create(email).Data;
+        var tripsResult = await (from tp in _context.TripParticipants
+                                join t in _context.Trips on tp.TripId equals t.TripId
+                                join u in _context.Users on tp.UserId equals u.Id
+                                where u.Email == emailResult
+                                select new TripModel()
+                                {
+                                    TripName = t.Name,
+                                    StartDate = t.DateStart,
+                                    EndDate = t.DateEnd
+                                }).ToListAsync();
+        return tripsResult;
+    }
 }

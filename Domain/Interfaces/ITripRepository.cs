@@ -11,4 +11,5 @@ public interface ITripRepository
     Task UpdateTrip(Trip trip);
     Task DeleteTrip(Trip trip);
     Task<Trip?> GetTripById(Guid id);
+    Task<List<TripModel?>> GetAllTripsByUserEmail(string email);
 }
