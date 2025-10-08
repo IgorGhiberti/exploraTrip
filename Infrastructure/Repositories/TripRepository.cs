@@ -74,9 +74,11 @@ internal class TripRepository : ITripRepository
                                 where u.Email == emailResult
                                 select new TripModel()
                                 {
+                                    TripID = t.TripId,
                                     TripName = t.Name,
                                     StartDate = t.DateStart,
-                                    EndDate = t.DateEnd
+                                    EndDate = t.DateEnd,
+                                    TripBudget = t.TripBudget
                                 }).ToListAsync();
         return tripsResult;
     }

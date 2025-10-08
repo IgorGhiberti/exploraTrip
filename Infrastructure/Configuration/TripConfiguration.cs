@@ -20,9 +20,9 @@ public class TripConfiguration : BaseEntityConfiguration<Trip>
 
         builder.Property(t => t.Notes);
 
-        builder.Property(t => t.DateStart);
+        builder.Property(t => t.DateStart).HasColumnType("timestamp without time zone");
 
-        builder.Property(t => t.DateEnd);
+        builder.Property(t => t.DateEnd).HasColumnType("timestamp without time zone");
 
         builder.Property(t => t.TripBudget);
 

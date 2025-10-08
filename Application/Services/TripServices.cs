@@ -33,8 +33,10 @@ internal class TripServices : ITripServices
                 return ResultData<ViewTripDto>.Error("User not found.");
             users.Add(user);
         }
-
-        var trip = Trip.CreateTrip(tripDto.Name, tripDto.StartDate?.ToUniversalTime(), tripDto.EndDate?.ToUniversalTime(), users[0].Email!.Value, tripDto.Budget, tripDto.Notes);
+        
+        var startDate = DateTime.SpecifyKind(tripDto.StartDate.Value, DateTimeKind.Unspecified);
+        var endDate = DateTime.SpecifyKind(tripDto.EndDate.Value, DateTimeKind.Unspecified);
+        var trip = Trip.CreateTrip(tripDto.Name, startDate, endDate, users[0].Email!.Value, tripDto.TripBudget, tripDto.Notes);
         if (!trip.IsSuccess)
             return ResultData<ViewTripDto>.Error(trip.Message);
         await _tripRepository.AddTrip(trip.Data!);
@@ -121,7 +123,7 @@ internal class TripServices : ITripServices
 
         foreach (var trip in trips)
         {
-            tripDtos.Add(new ViewTripDto(null, trip.TripName, trip.StartDate, trip.EndDate, null, trip.TripBudget));
+            tripDtos.Add(new ViewTripDto(trip!.TripID, trip.TripName, trip.StartDate, trip.EndDate, null, trip.TripBudget));
         }
 
         return ResultData<List<ViewTripDto>>.Success(tripDtos);

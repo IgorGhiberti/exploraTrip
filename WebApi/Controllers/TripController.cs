@@ -88,7 +88,7 @@ namespace WebApi.Controllers
         /// </summary>
         /// <param name="email">User e-mail</param>
         /// <returns>All trips that the user has access.</returns>
-        [HttpGet("/userTrips/{email}")]
+        [HttpGet("userTrips/{email}")]
         public async Task<IActionResult> GetAllTripsByUserEmail(string email)
         {
             var result = await _tripServices.GetAllTripsByUserEmail(email);
