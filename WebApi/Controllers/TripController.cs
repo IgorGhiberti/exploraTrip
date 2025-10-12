@@ -17,7 +17,7 @@ namespace WebApi.Controllers
         /// <summary>
         /// Create a new trip.
         /// </summary>
-        /// <param name="tripDto">Trip body</param>
+        /// <param name="tripDto">Trip body. Roles: Owner = 1, Viewer = 2 and Editor (can edit) = 3</param>
         /// <returns>Trip</returns>
         /// <response code="201">Created</response>
         /// <response code="400">BadRequest</response>

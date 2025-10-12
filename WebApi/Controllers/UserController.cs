@@ -168,7 +168,7 @@ namespace WebApi.Controllers
         /// Confirm the code sent by email.
         /// </summary>
         /// <param name="userDto">User body</param>
-        /// <param name="operationNumber">Operation number</param>
+        /// <param name="operationNumber">Operation 1 = Activate (to confirm the code for first-time users), Operation 2 = Update (for users already registered in the system).</param>
         /// <returns>A true or false value</returns>
         /// <response code="200">Ok</response>
         /// <response code="400">BadRequest</response> 
