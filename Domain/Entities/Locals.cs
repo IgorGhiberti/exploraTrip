@@ -38,9 +38,30 @@ public class Local : BaseEntity
             return ResultData<decimal?>.Error("Local budget cannot be bigger than trip budget");
         return ResultData<decimal?>.Success(localBudget);
     }
+
+    public void UpdateLocal(string? localName, DateTime? dateStart, DateTime? dateEnd, Trip trip,
+        decimal? localBudget = null, string[]? notes = null)
+    {
+        if (localBudget.HasValue)
+        {
+            var resultValidateBudget = ValidateLocalBudget(localBudget, trip);
+            if (!resultValidateBudget.IsSuccess)
+                return;
+            LocalBudget = localBudget;
+        }
+        
+        if (localName != null)
+            LocalName = localName;
+        if (dateStart != null)
+            DateStart = dateStart;
+        if (dateEnd != null)
+            DateEnd = dateEnd;
+        if (notes != null)
+            Notes = notes;
+    }
     public Guid LocalId { get; init; }
     public string LocalName { get; private set; } = string.Empty;
-    public DateTime? DateStart { get; init; }
+    public DateTime? DateStart { get; private set; }
     public DateTime? DateEnd { get; private set; }
     public string[]? Notes { get; private set; }
     public Guid TripId { get; private set; }
