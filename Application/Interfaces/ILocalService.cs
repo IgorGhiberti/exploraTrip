@@ -6,8 +6,8 @@ namespace Application.Interfaces;
 
 public interface ILocalService
 {
-    Task<ResultData<ViewLocalDTO>> AddTrip(CreateLocalDTO localDto);
-    Task<ResultData<ViewLocalDTO>> Update(UpdateLocalDTO localDto);
+    Task<ResultData<ViewLocalDTO>> AddLocal(CreateLocalDTO localDto);
+    Task<ResultData<ViewLocalDTO>> UpdateLocal(UpdateLocalDTO localDto);
     Task<ResultData<List<ViewLocalDTO>>> ListLocalByTrip(Guid tripId);
-    Task<ResultData<bool>> DeleteTrip(Guid localId);   
+    Task<ResultData<bool>> DeleteLocal(Guid localId);   
 }

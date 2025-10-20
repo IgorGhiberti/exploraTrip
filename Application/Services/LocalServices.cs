@@ -19,13 +19,17 @@ internal class LocalServices : ILocalService
         _tripRepository = tripRepository;
     }
 
-    public async Task<ResultData<ViewLocalDTO>> AddTrip(CreateLocalDTO localDto)
+    public async Task<ResultData<ViewLocalDTO>> AddLocal(CreateLocalDTO localDto)
     {
         var result = await _tripServices.GetTripById(localDto.TripId);
         if (!result.IsSuccess)
             return ResultData<ViewLocalDTO>.Error(result.Message);
 
         var trip = await _tripRepository.GetTripById(localDto.TripId);
+        decimal? newTripBudget = trip.TripBudget - localDto.LocalBudget;
+        trip.UpdateTrip(null, null, null, newTripBudget, null);
+        _tripRepository.UpdateTrip(trip);
+        
         var local = Local.CreateLocal(localDto.LocalName, localDto.DateStart, localDto.DateEnd, trip!, localDto.LocalBudget, localDto.Notes);
         
         if (!local.IsSuccess)
@@ -36,7 +40,7 @@ internal class LocalServices : ILocalService
         return ResultData<ViewLocalDTO>.Success(new ViewLocalDTO(local.Data.LocalId, local.Data.LocalName,  local.Data.DateStart, local.Data.DateEnd, local.Data.Notes, local.Data.LocalBudget));
     }
 
-    public async Task<ResultData<ViewLocalDTO>> Update(UpdateLocalDTO localDto)
+    public async Task<ResultData<ViewLocalDTO>> UpdateLocal(UpdateLocalDTO localDto)
     {
         var local = await _localRepository.GetLocalById(localDto.LocalId);
         if (local == null)
@@ -47,6 +51,9 @@ internal class LocalServices : ILocalService
             return ResultData<ViewLocalDTO>.Error(result.Message);
         
         var trip = await _tripRepository.GetTripById(localDto.TripId);
+        decimal? newTripBudget = trip.TripBudget - localDto.LocalBudget;
+        trip.UpdateTrip(null, null, null, newTripBudget, null);
+        _tripRepository.UpdateTrip(trip);
         
         local.UpdateLocal(localDto.LocalName, localDto.DateStart, localDto.DateEnd, trip!, localDto.LocalBudget, localDto.Notes);
 
@@ -62,7 +69,7 @@ internal class LocalServices : ILocalService
         return ResultData<List<ViewLocalDTO>>.Success(result.ToList());
     }
 
-    public async Task<ResultData<bool>> DeleteTrip(Guid localId)
+    public async Task<ResultData<bool>> DeleteLocal(Guid localId)
     {
         var local = await _localRepository.GetLocalById(localId);
         if (local == null)
