@@ -28,8 +28,8 @@ internal class LocalServices : ILocalService
         var trip = await _tripRepository.GetTripById(localDto.TripId);
         decimal? newTripBudget = trip.TripBudget - localDto.LocalBudget;
         trip.UpdateTrip(null, null, null, newTripBudget, null);
-        _tripRepository.UpdateTrip(trip);
-        
+        await _tripRepository.UpdateTrip(trip);
+
         var local = Local.CreateLocal(localDto.LocalName, localDto.DateStart, localDto.DateEnd, trip!, localDto.LocalBudget, localDto.Notes);
         
         if (!local.IsSuccess)
@@ -53,8 +53,8 @@ internal class LocalServices : ILocalService
         var trip = await _tripRepository.GetTripById(localDto.TripId);
         decimal? newTripBudget = trip.TripBudget - localDto.LocalBudget;
         trip.UpdateTrip(null, null, null, newTripBudget, null);
-        _tripRepository.UpdateTrip(trip);
-        
+        await _tripRepository.UpdateTrip(trip);
+
         local.UpdateLocal(localDto.LocalName, localDto.DateStart, localDto.DateEnd, trip!, localDto.LocalBudget, localDto.Notes);
 
         await _localRepository.UpdateLocal(local);
