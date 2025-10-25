@@ -11,7 +11,11 @@ var builder = WebApplication.CreateBuilder(args);
 //Dependency Injection
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+    });
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<GlobalExceptionsHandler>();
 builder.Services.AddScoped<IPasswordCryptography, Cryptography>();

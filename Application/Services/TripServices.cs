@@ -52,7 +52,7 @@ internal class TripServices : ITripServices
                 SendEmailHelper.SendEmail(users[i].Email!.Value, bodyParticipant, subject);
             }
         }
-        return ResultData<ViewTripDto>.Success(new ViewTripDto(trip.Data!.TripId, trip.Data!.Name, trip.Data!.DateStart, trip.Data!.DateEnd, tripDto.UserRoles, null));
+        return ResultData<ViewTripDto>.Success(new ViewTripDto(trip.Data!.TripId, trip.Data!.Name, trip.Data!.DateStart, trip.Data!.DateEnd, tripDto.UserRoles, trip.Data!.TripBudget));
     }
     private async Task AddTripParticipant(Trip trip, User user, RoleEnum role)
     {
@@ -66,7 +66,7 @@ internal class TripServices : ITripServices
             return ResultData<ViewTripDto>.Error("Trip not found.");
         List<UserRoleDTO> usersRoleDto = (from tp in tripModel.TripParticipantModels
                                           select new UserRoleDTO(tp.UserEmail!.Value, tp.Role)).ToList();
-        return ResultData<ViewTripDto>.Success(new ViewTripDto(id, tripModel.TripName, tripModel.StartDate, tripModel.EndDate, usersRoleDto, null));
+        return ResultData<ViewTripDto>.Success(new ViewTripDto(id, tripModel.TripName, tripModel.StartDate, tripModel.EndDate, usersRoleDto, tripModel.TripBudget));
     }
     public async Task<ResultData<ViewTripDto>> UpdateTrip(Guid id, UpdateTripDTO tripDto)
     {
@@ -82,7 +82,7 @@ internal class TripServices : ITripServices
             
         await _tripRepository.UpdateTrip(trip.Data);
 
-        return ResultData<ViewTripDto>.Success(new ViewTripDto(trip.Data.TripId, trip.Data.Name, trip.Data.DateStart, trip.Data.DateEnd, null, null));
+        return ResultData<ViewTripDto>.Success(new ViewTripDto(trip.Data.TripId, trip.Data.Name, trip.Data.DateStart, trip.Data.DateEnd, null, trip.Data.TripBudget));
     }
 
     public async Task<ResultData<string>> DeleteTrip(Guid id)
