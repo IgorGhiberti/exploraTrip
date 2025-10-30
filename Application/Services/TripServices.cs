@@ -75,11 +75,21 @@ internal class TripServices : ITripServices
         if (!trip.IsSuccess)
             return ResultData<ViewTripDto>.Error(trip.Message);
 
-        var resultUpdate = trip.Data!.UpdateTrip(tripDto.TripName, tripDto.startDate, tripDto.endDate, tripDto.TripBudget, tripDto.Notes);
+        // Converter DateTimeKind de UTC para Unspecified para compatibilidade com PostgreSQL 'timestamp without time zone'
+        // Mesma abordagem usada no método AddTrip
+        DateTime? startDate = tripDto.startDate.HasValue
+            ? DateTime.SpecifyKind(tripDto.startDate.Value, DateTimeKind.Unspecified)
+            : null;
+
+        DateTime? endDate = tripDto.endDate.HasValue
+            ? DateTime.SpecifyKind(tripDto.endDate.Value, DateTimeKind.Unspecified)
+            : null;
+
+        var resultUpdate = trip.Data!.UpdateTrip(tripDto.TripName, startDate, endDate, tripDto.TripBudget, tripDto.Notes);
 
         if (!resultUpdate.IsSuccess)
             return ResultData<ViewTripDto>.Error(resultUpdate.Message);
-            
+
         await _tripRepository.UpdateTrip(trip.Data);
 
         return ResultData<ViewTripDto>.Success(new ViewTripDto(trip.Data.TripId, trip.Data.Name, trip.Data.DateStart, trip.Data.DateEnd, null, trip.Data.TripBudget));
