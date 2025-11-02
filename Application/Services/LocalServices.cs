@@ -30,7 +30,9 @@ internal class LocalServices : ILocalService
         trip.UpdateTrip(null, null, null, newTripBudget, null);
         await _tripRepository.UpdateTrip(trip);
 
-        var local = Local.CreateLocal(localDto.LocalName, localDto.DateStart, localDto.DateEnd, trip!, localDto.LocalBudget, localDto.Notes);
+        var startDate = DateTime.SpecifyKind(localDto.DateStart.Value, DateTimeKind.Unspecified);
+        var endDate = DateTime.SpecifyKind(localDto.DateEnd.Value, DateTimeKind.Unspecified);
+        var local = Local.CreateLocal(localDto.LocalName, startDate, endDate, trip!, localDto.LocalBudget, localDto.Notes);
         
         if (!local.IsSuccess)
             return ResultData<ViewLocalDTO>.Error(local.Message);
@@ -55,7 +57,9 @@ internal class LocalServices : ILocalService
         trip.UpdateTrip(null, null, null, newTripBudget, null);
         await _tripRepository.UpdateTrip(trip);
 
-        local.UpdateLocal(localDto.LocalName, localDto.DateStart, localDto.DateEnd, trip!, localDto.LocalBudget, localDto.Notes);
+        var startDate = DateTime.SpecifyKind(localDto.DateStart.Value, DateTimeKind.Unspecified);
+        var endDate = DateTime.SpecifyKind(localDto.DateEnd.Value, DateTimeKind.Unspecified);
+        local.UpdateLocal(localDto.LocalName, startDate, endDate, trip!, localDto.LocalBudget, localDto.Notes);
 
         await _localRepository.UpdateLocal(local);
         return ResultData<ViewLocalDTO>.Success(new ViewLocalDTO(local.LocalId, local.LocalName,  local.DateStart, local.DateEnd, local.Notes, local.LocalBudget));

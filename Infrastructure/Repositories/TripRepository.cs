@@ -57,8 +57,15 @@ internal class TripRepository : ITripRepository
 
     public async Task UpdateTrip(Trip trip)
     {
-        _context.Update(trip);
-        await _context.SaveChangesAsync();
+        try
+        {
+            _context.Update(trip);
+            await _context.SaveChangesAsync();
+        } catch (Exception ex)
+        {
+            var error = ex.Message;
+        }
+        
     }
     public async Task<Trip?> GetTripById(Guid id)
     {

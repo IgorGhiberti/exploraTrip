@@ -75,7 +75,9 @@ internal class TripServices : ITripServices
         if (!trip.IsSuccess)
             return ResultData<ViewTripDto>.Error(trip.Message);
 
-        var resultUpdate = trip.Data!.UpdateTrip(tripDto.TripName, tripDto.startDate, tripDto.endDate, tripDto.TripBudget, tripDto.Notes);
+        var startDate = DateTime.SpecifyKind(tripDto.startDate.Value, DateTimeKind.Unspecified);
+        var endDate = DateTime.SpecifyKind(tripDto.endDate.Value, DateTimeKind.Unspecified);
+        var resultUpdate = trip.Data!.UpdateTrip(tripDto.TripName, startDate, endDate, tripDto.TripBudget, tripDto.Notes);
 
         if (!resultUpdate.IsSuccess)
             return ResultData<ViewTripDto>.Error(resultUpdate.Message);
