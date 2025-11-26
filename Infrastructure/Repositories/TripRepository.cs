@@ -4,6 +4,7 @@ using Domain.Models;
 using Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Infrastructure.Repositories;
 
@@ -50,7 +51,14 @@ internal class TripRepository : ITripRepository
                                                                  UserName = tripParticipant.User.UserName,
                                                                  UserEmail = tripParticipant.User.Email,
                                                                  Role = tripParticipant.Role
-                                                             }).OrderBy(trp => trp.Role).ToList()
+                                                             }).OrderBy(trp => trp.Role).ToList(),
+                                    TripLocalModels = (from local in t.Locals
+                                                         select new LocalModel()
+                                                         {
+                                                             LocalID = local.LocalId,
+                                                             LocalName = local.LocalName,
+                                                             LocalBudget = local.LocalBudget ?? 0,
+                                                         }).ToList(),
                                 }).FirstOrDefaultAsync();
         return tripResult;
     }

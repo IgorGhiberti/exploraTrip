@@ -9,4 +9,6 @@ public class TripModel
     public decimal? TripBudget { get; set; }
     public string[]? Notes { get; set; }
     public List<TripParticipantModel> TripParticipantModels { get; set; } = new List<TripParticipantModel>();
+    public List<LocalModel> TripLocalModels { get; set; } = new List<LocalModel>();
+    public decimal? TripAvailable { get; set; }
 }

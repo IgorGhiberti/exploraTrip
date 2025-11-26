@@ -66,7 +66,9 @@ internal class TripServices : ITripServices
             return ResultData<ViewTripDto>.Error("Trip not found.");
         List<UserRoleDTO> usersRoleDto = (from tp in tripModel.TripParticipantModels
                                           select new UserRoleDTO(tp.UserEmail!.Value, tp.Role)).ToList();
-        return ResultData<ViewTripDto>.Success(new ViewTripDto(id, tripModel.TripName, tripModel.StartDate, tripModel.EndDate, usersRoleDto, tripModel.TripBudget));
+
+        decimal? tripBudgetAvailable = tripModel.TripBudget - tripModel.TripLocalModels.Select(l => l.LocalBudget).Sum();
+        return ResultData<ViewTripDto>.Success(new ViewTripDto(id, tripModel.TripName, tripModel.StartDate, tripModel.EndDate, usersRoleDto, tripModel.TripBudget, tripBudgetAvailable));
     }
     public async Task<ResultData<ViewTripDto>> UpdateTrip(Guid id, UpdateTripDTO tripDto)
     {

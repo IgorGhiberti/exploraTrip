@@ -26,9 +26,6 @@ internal class LocalServices : ILocalService
             return ResultData<ViewLocalDTO>.Error(result.Message);
 
         var trip = await _tripRepository.GetTripById(localDto.TripId);
-        decimal? newTripBudget = trip.TripBudget - localDto.LocalBudget;
-        trip.UpdateTrip(null, null, null, newTripBudget, null);
-        await _tripRepository.UpdateTrip(trip);
 
         var startDate = DateTime.SpecifyKind(localDto.DateStart.Value, DateTimeKind.Unspecified);
         var endDate = DateTime.SpecifyKind(localDto.DateEnd.Value, DateTimeKind.Unspecified);
@@ -51,11 +48,8 @@ internal class LocalServices : ILocalService
         var result = await _tripServices.GetTripById(localDto.TripId);
         if (!result.IsSuccess)
             return ResultData<ViewLocalDTO>.Error(result.Message);
-        
+
         var trip = await _tripRepository.GetTripById(localDto.TripId);
-        decimal? newTripBudget = trip.TripBudget - localDto.LocalBudget;
-        trip.UpdateTrip(null, null, null, newTripBudget, null);
-        await _tripRepository.UpdateTrip(trip);
 
         var startDate = DateTime.SpecifyKind(localDto.DateStart.Value, DateTimeKind.Unspecified);
         var endDate = DateTime.SpecifyKind(localDto.DateEnd.Value, DateTimeKind.Unspecified);
