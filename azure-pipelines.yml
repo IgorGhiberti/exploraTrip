@@ -1,0 +1,42 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+  -main
+
+pool:
+  vmImage: 'windows-lastest'
+
+variables:
+  solution: '**/ExploraTrip.sln'
+  buildPlataforms: 'Any CPU'
+  buildConfiguration: 'Release'
+  project: '**/WebApi.csproj'
+
+setps:
+- task: NuGetCommand@2
+  inputs:
+    command: 'restore'
+    restoreSolution: '$(solution)'
+    feedsToUse: 'select'
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'test'
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    publishWebProjects: true
+    arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+    projects: '$(solution)'
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'AzureTestProject'
+    publishLocation: 'Container'
+    arguments: '--configuration $(buildConfiguration)'
+- task: NuGetToolInstaller@1
+  name: 'NuGetToolInstaller'
+  displayName: 'NuGet tool installer'
+  
