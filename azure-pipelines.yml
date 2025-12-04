@@ -4,10 +4,10 @@
 # https://aka.ms/yaml
 
 trigger:
-  -main
+  - main
 
 pool:
-  vmImage: 'windows-lastest'
+  vmImage: 'windows-latest'
 
 variables:
   solution: '**/ExploraTrip.sln'
@@ -15,7 +15,7 @@ variables:
   buildConfiguration: 'Release'
   project: '**/WebApi.csproj'
 
-setps:
+steps:
 - task: NuGetCommand@2
   inputs:
     command: 'restore'
